@@ -11,3 +11,9 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }
+
+//レスポンスデータ用
+type UserResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
