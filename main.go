@@ -1,8 +1,12 @@
 package main
 
 import (
+	"threadsAPI/controller"
 	"threadsAPI/db"
 	"threadsAPI/model"
+	"threadsAPI/repository"
+	"threadsAPI/router"
+	"threadsAPI/usecase"
 )
 
 func main() {
@@ -18,12 +22,10 @@ func main() {
 	dbConnect := db.OpenPostgresql()
 	dbConnect.AutoMigrate(model.User{})
 
-	// userRepository := repository.NewUserRepository(dbConnect)
-	//サンプルユーザデータの追加
-	// userRepository.InsertUser(&testUser)
-	//サンプルユーザデータの取得
-	//testUserRes := model.User{}
-	// userRepository.GetUserByLoginId(&testUserRes, "testLogin1")
-	//fmt.Printf("%+v", testUserRes)
+	userRepository := repository.NewUserRepository(dbConnect)
+	userUsecase := usecase.NewUserUsecase(userRepository)
+	userController := controller.NewUserController(userUsecase)
+	e := router.NewRouter(userController)
+	e.Logger.Fatal(e.Start(":8080"))
 	defer db.CloseDB(dbConnect)
 }
