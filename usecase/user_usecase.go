@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"log"
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
@@ -12,6 +13,7 @@ import (
 // ユーザusecaseのインターフェース
 type IUserUsecase interface {
 	SignUp(user model.User) (model.UserResponse, error)
+	Login(user model.User) error
 }
 
 // ユーザusecaseの構造体
@@ -53,4 +55,24 @@ func (uc *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 		Name: newUser.Name,
 	}
 	return resposeData, nil
+}
+
+// サインイン
+func (uc *userUsecase) Login(user model.User) error {
+	//loginID
+	loginId := user.LoginID
+	//取得してきたユーザID
+	storedUser := model.User{}
+	//loginIDを基にユーザ情報を取得
+	if err := uc.ur.GetUserByLoginId(&storedUser, loginId); err != nil {
+		return err
+	}
+	log.Printf("%+v", user)
+	log.Printf("%+v", storedUser)
+	//パスワードの認証
+	err := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
+	if err != nil {
+		return err
+	}
+	return nil
 }

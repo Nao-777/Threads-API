@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
@@ -10,6 +11,7 @@ import (
 
 type IUserController interface {
 	SignUp(c echo.Context) error
+	Login(c echo.Context) error
 }
 
 type userController struct {
@@ -31,4 +33,17 @@ func (uc *userController) SignUp(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 	return c.JSON(http.StatusCreated, userRes)
+}
+
+// サインイン
+func (uc *userController) Login(c echo.Context) error {
+	user := model.User{}
+	if err := c.Bind(&user); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	if err := uc.uu.Login(user); err != nil {
+		return err
+	}
+	log.Printf("%+v", user)
+	return c.NoContent(http.StatusOK)
 }
