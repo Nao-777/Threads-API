@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 
@@ -31,13 +32,15 @@ func (uc *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 		return model.UserResponse{}, err
 	}
 	//userIDを生成
-	userId, err := uuid.NewRandom()
+	userUUId, err := uuid.NewRandom()
 	if err != nil {
 		return model.UserResponse{}, err
 	}
+	//ハイフンを除去、文字列にした値をユーザIDとして登録
+	userId := strings.Replace(userUUId.String(), "-", "", -1)
 	//入力されたユーザの情報を登録
 	newUser := model.User{
-		ID:       userId.String(),
+		ID:       userId,
 		LoginID:  user.LoginID,
 		Name:     user.Name,
 		Password: string(hash),
