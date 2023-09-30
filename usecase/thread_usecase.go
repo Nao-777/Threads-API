@@ -8,6 +8,7 @@ import (
 type IThreadUsecase interface {
 	CreateThread(thread *model.Thread) error
 	GetThreadsByUserID(userId string) ([]model.Thread, error)
+	GetThreads(limit int, offset int) ([]model.Thread, error)
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
@@ -34,4 +35,11 @@ func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, erro
 	return threads, nil
 }
 
-//threadデータの取得
+// threadデータの取得
+func (tu *threadUsecase) GetThreads(limit int, offset int) ([]model.Thread, error) {
+	threads := []model.Thread{}
+	if err := tu.tr.GetThreads(&threads, limit, offset); err != nil {
+		return []model.Thread{}, err
+	}
+	return threads, nil
+}

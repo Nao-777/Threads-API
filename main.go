@@ -37,7 +37,8 @@ func main() {
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 
 	//threadUsecase.CreateThread(&testThread)
-	threads, err := threadUsecase.GetThreadsByUserID("f87de508-4ae3-45c5-a652-694facd1c1be")
+	//threads, err := threadUsecase.GetThreadsByUserID("f87de508-4ae3-45c5-a652-694facd1c1be")
+	threads, err := threadUsecase.GetThreads(2, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
