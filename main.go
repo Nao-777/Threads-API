@@ -28,21 +28,23 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	//データ作成テスト
 	// testThread := model.Thread{
-	// 	ID:       "test4",
+	// 	ID:       "test5",
 	// 	UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
 	// 	Title:    "test",
 	// 	Contents: "testcontents",
 	// }
-	// threadRepository.CreateThread(&testThread)
-	// log.Printf("%+v", testThread)
-	test2Thread := []model.Thread{}
-	// threadRepository.GetThreadsByUserID(&test2Thread, "f87de508-4ae3-45c5-a652-694facd1c1be")
-
-	threadRepository.GetThreads(&test2Thread, 2, 1)
-	for _, v := range test2Thread {
-		log.Printf("%+v\n", v)
-	}
 	userUsecase := usecase.NewUserUsecase(userRepository)
+	threadUsecase := usecase.NewThreadUsecase(threadRepository)
+
+	//threadUsecase.CreateThread(&testThread)
+	threads, err := threadUsecase.GetThreadsByUserID("f87de508-4ae3-45c5-a652-694facd1c1be")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, t := range threads {
+		log.Printf("%+v\n", t)
+	}
+
 	userController := controller.NewUserController(userUsecase)
 	e := router.NewRouter(userController)
 	e.Logger.Fatal(e.Start(":8080"))
