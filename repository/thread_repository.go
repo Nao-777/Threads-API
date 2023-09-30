@@ -8,6 +8,7 @@ import (
 
 type IThreadRepository interface {
 	CreateThread(thread *model.Thread) error
+	GetThreadsByUserID(thread *[]model.Thread, userId string) error
 }
 
 type threadRepository struct {
@@ -27,7 +28,13 @@ func (tr *threadRepository) CreateThread(thread *model.Thread) error {
 }
 
 // threadデータの取得（ユーザIDで）
-func (tr *threadRepository) GetThreadsByUserID() error {
+func (tr *threadRepository) GetThreadsByUserID(threads *[]model.Thread, userId string) error {
+	// if err := tr.db.First(threads, "user_id=?", userId).Error; err != nil {
+	// 	return err
+	// }
+	if err := tr.db.Joins("User").Where("user_id=?", userId).Find(threads).Error; err != nil {
+		return err
+	}
 	return nil
 }
 
