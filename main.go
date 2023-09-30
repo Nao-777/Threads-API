@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"threadsAPI/controller"
 	"threadsAPI/db"
 	"threadsAPI/model"
@@ -27,13 +28,13 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	//データ作成テスト
 	testThread := model.Thread{
-		ID:       "test1",
-		UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
-		UserName: "json",
+		ID:       "test4",
+		UserId:   "test3",
 		Title:    "test",
 		Contents: "testcontents",
 	}
 	threadRepository.CreateThread(&testThread)
+	log.Printf("%+v", testThread)
 
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userController := controller.NewUserController(userUsecase)
