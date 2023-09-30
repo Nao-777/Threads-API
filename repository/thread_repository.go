@@ -9,6 +9,7 @@ import (
 type IThreadRepository interface {
 	CreateThread(thread *model.Thread) error
 	GetThreadsByUserID(thread *[]model.Thread, userId string) error
+	GetThreads(threads *[]model.Thread, limit int, offset int) error
 }
 
 type threadRepository struct {
@@ -29,16 +30,20 @@ func (tr *threadRepository) CreateThread(thread *model.Thread) error {
 
 // threadデータの取得（ユーザIDで）
 func (tr *threadRepository) GetThreadsByUserID(threads *[]model.Thread, userId string) error {
-	// if err := tr.db.First(threads, "user_id=?", userId).Error; err != nil {
-	// 	return err
-	// }
 	if err := tr.db.Joins("User").Where("user_id=?", userId).Find(threads).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-//threadデータ取得（取得件数）
+// threadデータ取得（取得件数）
+func (tr *threadRepository) GetThreads(threads *[]model.Thread, limit int, offset int) error {
+
+	if err := tr.db.Joins("User").Offset(offset).Limit(limit).Find(threads).Error; err != nil {
+		return err
+	}
+	return nil
+}
 
 //threadデータの削除
 

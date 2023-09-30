@@ -36,11 +36,12 @@ func main() {
 	// threadRepository.CreateThread(&testThread)
 	// log.Printf("%+v", testThread)
 	test2Thread := []model.Thread{}
-	threadRepository.GetThreadsByUserID(&test2Thread, "f87de508-4ae3-45c5-a652-694facd1c1be")
+	// threadRepository.GetThreadsByUserID(&test2Thread, "f87de508-4ae3-45c5-a652-694facd1c1be")
+
+	threadRepository.GetThreads(&test2Thread, 2, 1)
 	for _, v := range test2Thread {
 		log.Printf("%+v\n", v)
 	}
-
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userController := controller.NewUserController(userUsecase)
 	e := router.NewRouter(userController)
