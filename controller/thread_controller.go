@@ -12,6 +12,7 @@ import (
 type IThreadController interface {
 	CreateThread(c echo.Context) error
 	GetThreadsByUserID(c echo.Context) error
+	GetThreads(c echo.Context) error
 }
 type threadController struct {
 	tu usecase.IThreadUsecase
@@ -43,6 +44,22 @@ func (tc *threadController) GetThreadsByUserID(c echo.Context) error {
 	}
 	for _, v := range threads {
 		log.Printf("%+v\n", v)
+	}
+	return c.JSON(http.StatusOK, threads)
+}
+
+// threadデータの取得
+func (tc *threadController) GetThreads(c echo.Context) error {
+	limit := c.QueryParam("limit")
+	offset := c.QueryParam("offset")
+	log.Printf("%s:%s", limit, offset)
+	//limitとoffsetの指定なし
+	if limit == "" || offset == "" {
+		//
+	}
+	threads, err := tc.tu.GetThreads(limit, offset)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, threads)
 }

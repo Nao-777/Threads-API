@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"strconv"
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
@@ -11,7 +12,7 @@ import (
 type IThreadUsecase interface {
 	CreateThread(thread *model.Thread) error
 	GetThreadsByUserID(userId string) ([]model.Thread, error)
-	GetThreads(limit int, offset int) ([]model.Thread, error)
+	GetThreads(limit string, offset string) ([]model.Thread, error)
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
@@ -48,8 +49,17 @@ func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, erro
 }
 
 // threadデータの取得
-func (tu *threadUsecase) GetThreads(limit int, offset int) ([]model.Thread, error) {
+func (tu *threadUsecase) GetThreads(limitParam string, offsetParam string) ([]model.Thread, error) {
 	threads := []model.Thread{}
+	limit, err := strconv.Atoi(limitParam)
+	if err != nil {
+		return []model.Thread{}, err
+	}
+	offset, err := strconv.Atoi(offsetParam)
+	if err != nil {
+		return []model.Thread{}, err
+	}
+
 	if err := tu.tr.GetThreads(&threads, limit, offset); err != nil {
 		return []model.Thread{}, err
 	}

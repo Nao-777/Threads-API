@@ -14,5 +14,6 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController) *
 	t := e.Group("/threads")
 	t.POST("", tc.CreateThread)
 	t.GET("/:id", tc.GetThreadsByUserID)
+	t.GET("", tc.GetThreads)
 	return e
 }
