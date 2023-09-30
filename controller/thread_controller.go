@@ -55,9 +55,13 @@ func (tc *threadController) GetThreads(c echo.Context) error {
 	log.Printf("%s:%s", limit, offset)
 	//limitとoffsetの指定なし
 	if limit == "" || offset == "" {
-		//
+		threads, err := tc.tu.GetThreads()
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+		return c.JSON(http.StatusOK, threads)
 	}
-	threads, err := tc.tu.GetThreads(limit, offset)
+	threads, err := tc.tu.GetThreadsLimitAndOffset(limit, offset)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}

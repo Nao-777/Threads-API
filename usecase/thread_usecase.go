@@ -12,7 +12,8 @@ import (
 type IThreadUsecase interface {
 	CreateThread(thread *model.Thread) error
 	GetThreadsByUserID(userId string) ([]model.Thread, error)
-	GetThreads(limit string, offset string) ([]model.Thread, error)
+	GetThreadsLimitAndOffset(limit string, offset string) ([]model.Thread, error)
+	GetThreads() ([]model.Thread, error)
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
@@ -49,7 +50,7 @@ func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, erro
 }
 
 // threadデータの取得
-func (tu *threadUsecase) GetThreads(limitParam string, offsetParam string) ([]model.Thread, error) {
+func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam string) ([]model.Thread, error) {
 	threads := []model.Thread{}
 	limit, err := strconv.Atoi(limitParam)
 	if err != nil {
@@ -60,7 +61,14 @@ func (tu *threadUsecase) GetThreads(limitParam string, offsetParam string) ([]mo
 		return []model.Thread{}, err
 	}
 
-	if err := tu.tr.GetThreads(&threads, limit, offset); err != nil {
+	if err := tu.tr.GetThreadsLimitAndOffset(&threads, limit, offset); err != nil {
+		return []model.Thread{}, err
+	}
+	return threads, nil
+}
+func (tu *threadUsecase) GetThreads() ([]model.Thread, error) {
+	threads := []model.Thread{}
+	if err := tu.tr.GetThreads(&threads); err != nil {
 		return []model.Thread{}, err
 	}
 	return threads, nil
