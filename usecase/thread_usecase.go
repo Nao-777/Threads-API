@@ -1,8 +1,11 @@
 package usecase
 
 import (
+	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
+
+	"github.com/google/uuid"
 )
 
 type IThreadUsecase interface {
@@ -20,6 +23,15 @@ func NewThreadUsecase(tr repository.IThreadRepository) IThreadUsecase {
 
 // threadデータの作成
 func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
+	//スレッドIDの作成
+	//userIDを生成
+	threadUUId, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	//ハイフンを除去、文字列にした値をユーザIDとして登録
+	threadId := strings.Replace(threadUUId.String(), "-", "", -1)
+	thread.ID = threadId
 	if err := tu.tr.CreateThread(thread); err != nil {
 		return err
 	}
