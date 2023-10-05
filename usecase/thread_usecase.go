@@ -12,8 +12,8 @@ import (
 type IThreadUsecase interface {
 	CreateThread(thread *model.Thread) error
 	GetThreadsByUserID(userId string) ([]model.Thread, error)
-	GetThreadsLimitAndOffset(limit string, offset string) ([]model.Thread, error)
-	GetThreads() ([]model.Thread, error)
+	GetThreadsLimitAndOffset(limit string, offset string) ([]model.ResThread, error)
+	GetThreads() ([]model.ResThread, error)
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
@@ -50,26 +50,52 @@ func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, erro
 }
 
 // threadデータの取得
-func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam string) ([]model.Thread, error) {
+func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam string) ([]model.ResThread, error) {
 	threads := []model.Thread{}
+	resThreads:=[]model.ResThread{}
 	limit, err := strconv.Atoi(limitParam)
 	if err != nil {
-		return []model.Thread{}, err
+		return []model.ResThread{}, err
 	}
 	offset, err := strconv.Atoi(offsetParam)
 	if err != nil {
-		return []model.Thread{}, err
+		return []model.ResThread{}, err
 	}
 
 	if err := tu.tr.GetThreadsLimitAndOffset(&threads, limit, offset); err != nil {
-		return []model.Thread{}, err
+		return []model.ResThread{}, err
 	}
-	return threads, nil
+	//res用の構造体に値を格納
+	for _,thread:=range threads{
+		resThread:=model.ResThread{
+			ID: thread.ID,
+			UserName: thread.User.Name,
+			LoginID: thread.User.LoginID,
+			Title: thread.Title,
+			Contents: thread.Contents,
+			CreatedAt: thread.CreatedAt,
+		}
+		resThreads = append(resThreads, resThread)
+	}
+	return resThreads, nil
 }
-func (tu *threadUsecase) GetThreads() ([]model.Thread, error) {
+func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 	threads := []model.Thread{}
+	resThreads:=[]model.ResThread{}
 	if err := tu.tr.GetThreads(&threads); err != nil {
-		return []model.Thread{}, err
+		return []model.ResThread{}, err
 	}
-	return threads, nil
+	//res用の構造体に値を格納
+	for _,thread:=range threads{
+		resThread:=model.ResThread{
+			ID: thread.ID,
+			UserName: thread.User.Name,
+			LoginID: thread.User.LoginID,
+			Title: thread.Title,
+			Contents: thread.Contents,
+			CreatedAt: thread.CreatedAt,
+		}
+		resThreads = append(resThreads, resThread)
+	}
+	return resThreads, nil
 }
