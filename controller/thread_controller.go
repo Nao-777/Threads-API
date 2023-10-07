@@ -24,6 +24,7 @@ func NewThreadController(tu usecase.IThreadUsecase) IThreadController {
 
 // threadデータの作成
 func (tc *threadController) CreateThread(c echo.Context) error {
+	log.Printf("Insert\n")
 	thread := model.Thread{}
 	if err := c.Bind(&thread); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
@@ -52,6 +53,7 @@ func (tc *threadController) GetThreadsByUserID(c echo.Context) error {
 func (tc *threadController) GetThreads(c echo.Context) error {
 	limit := c.QueryParam("limit")
 	offset := c.QueryParam("offset")
+	log.Printf("Get\n")
 	log.Printf("%s:%s", limit, offset)
 	//limitとoffsetの指定なし
 	if limit == "" || offset == "" {
