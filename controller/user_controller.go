@@ -13,6 +13,7 @@ import (
 type IUserController interface {
 	SignUp(c echo.Context) error
 	Login(c echo.Context) error
+	LogOut(c echo.Context)error
 	CsrfToken(c echo.Context)error
 }
 
@@ -56,6 +57,19 @@ func (uc *userController) Login(c echo.Context) error {
 	cookie.Name="token"
 	cookie.Value=token
 	cookie.Expires=time.Now().Add(24*time.Hour)
+	cookie.Path="/"
+	cookie.Domain="localhost"
+	//cookie.Secure=true
+	cookie.HttpOnly=true
+	cookie.SameSite=http.SameSiteNoneMode
+	c.SetCookie(cookie)
+	return c.NoContent(http.StatusOK)
+}
+func(uc *userController)LogOut(c echo.Context)error{
+	cookie:=new(http.Cookie)
+	cookie.Name="token"
+	cookie.Value=""
+	cookie.Expires=time.Now()
 	cookie.Path="/"
 	cookie.Domain="localhost"
 	//cookie.Secure=true
