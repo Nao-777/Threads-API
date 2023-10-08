@@ -1,12 +1,15 @@
 package main
 
 import (
+	"log"
 	"threadsAPI/controller"
 	"threadsAPI/db"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/router"
 	"threadsAPI/usecase"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -18,7 +21,10 @@ func main() {
 	// 	Name:     "tester",
 	// 	Password: "password",
 	// }
-
+	//開発時だけ読み込むようにしたい
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal(err)
+	}
 	dbConnect := db.OpenPostgresql()
 	dbConnect.AutoMigrate(model.User{})
 	dbConnect.AutoMigrate(model.Thread{})

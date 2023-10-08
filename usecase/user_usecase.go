@@ -2,10 +2,13 @@ package usecase
 
 import (
 	"log"
+	"os"
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
+	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,7 +16,7 @@ import (
 // ユーザusecaseのインターフェース
 type IUserUsecase interface {
 	SignUp(user model.User) (model.UserResponse, error)
-	Login(user model.User) error
+	Login(user model.User) (string,error)
 }
 
 // ユーザusecaseの構造体
@@ -58,21 +61,35 @@ func (uc *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 }
 
 // サインイン
-func (uc *userUsecase) Login(user model.User) error {
-	//loginID
+func (uc *userUsecase) Login(user model.User) (string,error) {
 	loginId := user.LoginID
-	//取得してきたユーザID
 	storedUser := model.User{}
-	//loginIDを基にユーザ情報を取得
 	if err := uc.ur.GetUserByLoginId(&storedUser, loginId); err != nil {
-		return err
+		return "",err
 	}
 	log.Printf("%+v", user)
 	log.Printf("%+v", storedUser)
 	//パスワードの認証
 	err := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
 	if err != nil {
-		return err
+		return "",err
 	}
-	return nil
+	privatekeyBytes,err:=os.ReadFile(os.Getenv("PATH_PRIVATEKEY"))
+	if err!=nil{
+		log.Fatal(err)
+	}
+	privatekey,err:=jwt.ParseRSAPrivateKeyFromPEM(privatekeyBytes)
+	if err!=nil{
+		log.Fatal(err)
+	}
+	token:=jwt.NewWithClaims(jwt.SigningMethodRS512,jwt.MapClaims{
+		"user_id":storedUser.ID,
+		"exp":time.Now().Add(time.Hour*24).Unix(),
+	})
+	tokenString,err:=token.SignedString(privatekey)
+	if err!=nil{
+		log.Fatal(err)
+	}
+	log.Println("tokenString:"+tokenString)
+	return tokenString,nil
 }

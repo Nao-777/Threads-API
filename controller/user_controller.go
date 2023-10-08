@@ -41,9 +41,14 @@ func (uc *userController) Login(c echo.Context) error {
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	if err := uc.uu.Login(user); err != nil {
-		return err
+	// if err := uc.uu.Login(user); err != nil {
+	// 	return err
+	// }
+	token,err:=uc.uu.Login(user)
+	if err !=nil{
+		log.Fatal(err)
 	}
-	log.Printf("%+v", user)
+	//log.Printf("%+v", user)
+	log.Println(token)
 	return c.NoContent(http.StatusOK)
 }
