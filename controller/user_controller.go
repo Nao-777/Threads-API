@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -12,6 +13,7 @@ import (
 type IUserController interface {
 	SignUp(c echo.Context) error
 	Login(c echo.Context) error
+	CsrfToken(c echo.Context)error
 }
 
 type userController struct {
@@ -50,5 +52,21 @@ func (uc *userController) Login(c echo.Context) error {
 	}
 	//log.Printf("%+v", user)
 	log.Println(token)
+	cookie:=new(http.Cookie)
+	cookie.Name="token"
+	cookie.Value=token
+	cookie.Expires=time.Now().Add(24*time.Hour)
+	cookie.Path="/"
+	cookie.Domain="localhost"
+	//cookie.Secure=true
+	cookie.HttpOnly=true
+	cookie.SameSite=http.SameSiteNoneMode
+	c.SetCookie(cookie)
 	return c.NoContent(http.StatusOK)
+}
+func (uc *userController)CsrfToken(c echo.Context)error{
+	token:=c.Get("csrf").(string)
+	return c.JSON(http.StatusOK,echo.Map{
+		"csrf_token":token,
+	})
 }
