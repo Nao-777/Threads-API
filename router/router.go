@@ -1,9 +1,13 @@
 package router
 
 import (
+	"log"
 	"net/http"
+	"os"
 	"threadsAPI/controller"
 
+	"github.com/golang-jwt/jwt"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -38,6 +42,19 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController) *
 	e.GET("/csrf",uc.CsrfToken)
 
 	t := e.Group("/threads")
+	keyBytes,err:=os.ReadFile(os.Getenv("PATH_PUBLICKEY"))
+	if err!=nil{
+		log.Fatal(err)
+	}
+	publickey,err:=jwt.ParseRSAPublicKeyFromPEM(keyBytes)
+	if err!=nil{
+		log.Fatal(err)
+	}
+	t.Use(echojwt.WithConfig(echojwt.Config{
+		SigningMethod: "RS512",
+		SigningKey: publickey,
+		TokenLookup: "cookie:token",
+	}))
 	t.POST("", tc.CreateThread)
 	t.GET("/:id", tc.GetThreadsByUserID)
 	t.GET("", tc.GetThreads)
