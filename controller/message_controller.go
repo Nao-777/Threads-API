@@ -23,8 +23,10 @@ func (mc *messageController)CreateMessage(c echo.Context)error{
 	user:=c.Get("user").(*jwt.Token)
 	claims:=user.Claims.(jwt.MapClaims)
 	userId:=claims["user_id"].(string)
+	threadId:=c.Param("threadId")
 	msg:=model.Message{
 		UserId: userId,
+		ThreadId: threadId,
 	}
 	if err:=c.Bind(&msg);err!=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())
