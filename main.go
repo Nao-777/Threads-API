@@ -32,6 +32,16 @@ func main() {
 
 	userRepository := repository.NewUserRepository(dbConnect)
 	threadRepository := repository.NewThreadRpository(dbConnect)
+	messageRepository:=repository.NewMessageRepository(dbConnect)
+	msgSample := model.Message{
+		Id: "sample1",
+		ThreadId: "09877ae0ccfd4b8e9e0858d117faa4f6",
+		UserId: "f87de508-4ae3-45c5-a652-694facd1c1be",
+		Message: "repository create test1",
+		Url: "#",
+	}
+
+	messageRepository.CreateMessage(&msgSample)
 	//データ作成テスト
 	// testThread := model.Thread{
 

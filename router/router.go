@@ -32,9 +32,9 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController) *
 		CookiePath:"/",
 		CookieDomain:"localhost",
 		CookieHTTPOnly: true,
-		CookieSameSite: http.SameSiteNoneMode,
-		//CookieSameSite:http.SameSiteDefaultMode,
-		CookieMaxAge:60,
+		//CookieSameSite: http.SameSiteNoneMode,
+		CookieSameSite:http.SameSiteDefaultMode,
+		//CookieMaxAge:60,
 	}))
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.Login)
