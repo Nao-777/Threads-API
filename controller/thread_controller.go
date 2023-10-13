@@ -69,3 +69,13 @@ func (tc *threadController) GetThreads(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, threads)
 }
+func(tc *threadController)DeleteThread(c echo.Context)error{
+	thread:=model.Thread{}
+	if err:=c.Bind(thread);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	if err:=tc.tu.DeleteThread(thread);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	return c.NoContent(http.StatusOK)
+}

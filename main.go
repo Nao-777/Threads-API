@@ -36,7 +36,7 @@ func main() {
 	
 	//データ作成テスト
 	testThread := model.Thread{
-		ID: "127a6d9105824336952f6a83d826b595",
+		ID: "0b233ecfd1f746588e10fdf8bbac1743",
 		// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
 		Title:    "変更1013",
 		Contents: "hennkousitanndasi!",
@@ -45,7 +45,7 @@ func main() {
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 
-	threadUsecase.DeleteThread(testThread)
+	threadUsecase.UpdateThread(testThread)
 	
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)

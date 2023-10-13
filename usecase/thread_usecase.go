@@ -15,6 +15,7 @@ type IThreadUsecase interface {
 	GetThreadsLimitAndOffset(limit string, offset string) ([]model.ResThread, error)
 	GetThreads() ([]model.ResThread, error)
 	DeleteThread(thread model.Thread)error
+	UpdateThread(thread model.Thread)error
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
@@ -102,6 +103,12 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 }
 func (tu *threadUsecase)DeleteThread(thread model.Thread)error{
 	if err:=tu.tr.DeleteThread(&thread);err!=nil{
+		return err
+	}
+	return nil
+}
+func(tu *threadUsecase)UpdateThread(thread model.Thread)error{
+	if err:=tu.tr.UpdateThread(&thread);err!=nil{
 		return err
 	}
 	return nil
