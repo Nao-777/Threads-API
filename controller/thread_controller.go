@@ -32,7 +32,7 @@ func (tc *threadController) CreateThread(c echo.Context) error {
 	if err := tc.tu.CreateThread(&thread); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	return nil
+	return c.NoContent(http.StatusOK)
 }
 
 // threadデータの取得(ユーザID)
