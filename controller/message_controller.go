@@ -11,6 +11,7 @@ import (
 
 type IMessageController interface {
 	CreateMessage(c echo.Context)error
+	GetMessagesByThreadId(c echo.Context)error
 }
 type messageController struct {
 	mu usecase.IMessageUsecase
@@ -32,4 +33,12 @@ func (mc *messageController)CreateMessage(c echo.Context)error{
 		return c.JSON(http.StatusBadRequest,err.Error())
 	}
 	return c.NoContent(http.StatusOK)
+}
+func (mc *messageController)GetMessagesByThreadId(c echo.Context)error{
+	threadId:=c.Param("threadId")
+	msgs,err:=mc.mu.GetMessagesByThreadId(threadId)
+	if err!=nil{
+		return err
+	}
+	return c.JSON(http.StatusBadRequest,msgs)
 }

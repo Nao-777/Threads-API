@@ -56,10 +56,11 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController,mc
 		TokenLookup: "cookie:token",
 	}))
 	t.POST("", tc.CreateThread)
-	t.GET("/:id", tc.GetThreadsByUserID)
+	//t.GET("/:id", tc.GetThreadsByUserID)
 	t.GET("", tc.GetThreads)
 
-	m:=t.Group("/message")
+	m:=t.Group("/:threadId")
 	m.POST("",mc.CreateMessage)
+	m.GET("",mc.GetMessagesByThreadId)
 	return e
 }
