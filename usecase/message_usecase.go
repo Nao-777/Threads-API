@@ -11,6 +11,7 @@ import (
 type IMessageUsecase interface {
 	CreateMessage(message *model.Message)error
 	GetMessagesByThreadId(threadId string)([]model.Message,error)
+	DeleteMessage(msgId string)error
 }
 type messageUsecase struct {
 	mr repository.IMessageRepository
@@ -37,4 +38,13 @@ func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.Message,e
 		return []model.Message{},err
 	}
 	return msg,nil
+}
+func(mu *messageUsecase)DeleteMessage(msgId string)error{
+	msg:=model.Message{
+		Id: msgId,
+	}
+	if err:=mu.mr.DeleteMessage(&msg);err!=nil{
+		return err
+	}
+	return nil
 }

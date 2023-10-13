@@ -62,6 +62,7 @@ func main() {
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	messageUsecase.CreateMessage(&msgSample)
 	msgSampleUsecase,err:=messageUsecase.GetMessagesByThreadId("09877ae0ccfd4b8e9e0858d117faa4f6")
+	messageUsecase.DeleteMessage("sample1")
 	if err!=nil{
 		log.Fatal(err)
 	}
@@ -70,6 +71,7 @@ func main() {
 	} 
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
+
 
 	e := router.NewRouter(userController, threadController)
 	e.Logger.Fatal(e.Start(":8080"))
