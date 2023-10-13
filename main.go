@@ -34,7 +34,7 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
 	msgSample := model.Message{
-		Id: "sample1",
+		Id: "sample3",
 		ThreadId: "09877ae0ccfd4b8e9e0858d117faa4f6",
 		UserId: "f87de508-4ae3-45c5-a652-694facd1c1be",
 		Message: "repository create test1",
@@ -42,6 +42,11 @@ func main() {
 	}
 
 	messageRepository.CreateMessage(&msgSample)
+	msgSample1:=[]model.Message{}
+	messageRepository.GetMessages(&msgSample1,"09877ae0ccfd4b8e9e0858d117faa4f6")
+	for _,v :=range msgSample1{
+		log.Println(v)
+	}
 	//データ作成テスト
 	// testThread := model.Thread{
 
