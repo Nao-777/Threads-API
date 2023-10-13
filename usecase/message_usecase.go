@@ -10,6 +10,7 @@ import (
 
 type IMessageUsecase interface {
 	CreateMessage(message *model.Message)error
+	GetMessagesByThreadId(threadId string)([]model.Message,error)
 }
 type messageUsecase struct {
 	mr repository.IMessageRepository
@@ -29,4 +30,11 @@ func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 		return err
 	}
 	return nil
+}
+func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.Message,error){
+	msg:=[]model.Message{}
+	if err :=mu.mr.GetMessagesByThreadId(&msg,threadId);err!=nil{
+		return []model.Message{},err
+	}
+	return msg,nil
 }

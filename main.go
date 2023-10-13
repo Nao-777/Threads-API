@@ -61,6 +61,13 @@ func main() {
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	messageUsecase.CreateMessage(&msgSample)
+	msgSampleUsecase,err:=messageUsecase.GetMessagesByThreadId("09877ae0ccfd4b8e9e0858d117faa4f6")
+	if err!=nil{
+		log.Fatal(err)
+	}
+	for _,v :=range msgSampleUsecase{
+		log.Println(v)
+	} 
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
 
