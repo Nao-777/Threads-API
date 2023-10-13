@@ -8,7 +8,8 @@ import (
 
 type IMessageRepository interface {
 	CreateMessage(message *model.Message)error
-	GetMessages(message *[]model.Message,threadId string)error
+	GetMessagesByThreadId(message *[]model.Message,threadId string)error
+	DeleteMessage(message *model.Message)error
 }
 
 type messageRepository struct {
@@ -24,8 +25,14 @@ func (mr *messageRepository)CreateMessage(message *model.Message)error{
 	}
 	return nil
 }
-func (mr *messageRepository)GetMessages(message *[]model.Message,threadId string)error{
+func (mr *messageRepository)GetMessagesByThreadId(message *[]model.Message,threadId string)error{
 	if err :=mr.db.Joins("Thread").Where("thread_id=?",threadId).Find(message).Error;err!=nil{
+		return err
+	}
+	return nil
+}
+func (mr *messageRepository)DeleteMessage(message *model.Message)error{
+	if err:=mr.db.Delete(message).Error;err!=nil{
 		return err
 	}
 	return nil
