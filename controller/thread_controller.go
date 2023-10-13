@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -14,6 +15,7 @@ type IThreadController interface {
 	GetThreadsByUserID(c echo.Context) error
 	GetThreads(c echo.Context) error
 	DeleteThread(c echo.Context)error
+	UpdateThread(c echo.Context)error
 }
 type threadController struct {
 	tu usecase.IThreadUsecase
@@ -76,6 +78,17 @@ func(tc *threadController)DeleteThread(c echo.Context)error{
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	if err:=tc.tu.DeleteThread(thread);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	return c.NoContent(http.StatusOK)
+}
+func (tc *threadController)UpdateThread(c echo.Context)error{
+	thread:=model.Thread{}
+	if err:=c.Bind(&thread);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	thread.UpdateAt=time.Now()
+	if err:=tc.tu.UpdateThread(thread);err!=nil{
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	return c.NoContent(http.StatusOK)

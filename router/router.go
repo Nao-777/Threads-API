@@ -59,6 +59,7 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController,mc
 	//t.GET("/:id", tc.GetThreadsByUserID)
 	t.GET("", tc.GetThreads)
 	t.DELETE("",tc.DeleteThread)
+	t.PUT("",tc.UpdateThread)
 
 	m:=t.Group("/:threadId")
 	m.POST("",mc.CreateMessage)
