@@ -6,13 +6,13 @@ import (
 	"os"
 	"threadsAPI/controller"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func NewRouter(uc controller.IUserController, tc controller.IThreadController) *echo.Echo {
+func NewRouter(uc controller.IUserController, tc controller.IThreadController,mc controller.IMessageController) *echo.Echo {
 	e := echo.New()
 	//corsの設定
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -58,5 +58,8 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController) *
 	t.POST("", tc.CreateThread)
 	t.GET("/:id", tc.GetThreadsByUserID)
 	t.GET("", tc.GetThreads)
+
+	m:=t.Group("/message")
+	m.POST("",mc.CreateMessage)
 	return e
 }
