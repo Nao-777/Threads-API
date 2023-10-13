@@ -8,6 +8,7 @@ import (
 	"threadsAPI/repository"
 	"threadsAPI/router"
 	"threadsAPI/usecase"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -34,7 +35,7 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
 	msgSample := model.Message{
-		Id: "sample5",
+		Id: "sample6",
 		ThreadId: "09877ae0ccfd4b8e9e0858d117faa4f6",
 		UserId: "f87de508-4ae3-45c5-a652-694facd1c1be",
 		Message: "repository create test1",
@@ -45,9 +46,12 @@ func main() {
 	msgSample1:=[]model.Message{}
 	messageRepository.GetMessagesByThreadId(&msgSample1,"09877ae0ccfd4b8e9e0858d117faa4f6")
 	msgSample2:=model.Message{
-		Id:"sample3",
+		Id:"sample1",
+		Message: "repository update test1",
+		UpdateAt: time.Now(),
 	}
-	messageRepository.DeleteMessage(&msgSample2)
+	//messageRepository.DeleteMessage(&msgSample2)
+	messageRepository.UpdateMessage(&msgSample2)
 	for _,v :=range msgSample1{
 		log.Println(v)
 	}

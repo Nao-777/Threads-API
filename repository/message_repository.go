@@ -10,6 +10,7 @@ type IMessageRepository interface {
 	CreateMessage(message *model.Message)error
 	GetMessagesByThreadId(message *[]model.Message,threadId string)error
 	DeleteMessage(message *model.Message)error
+	UpdateMessage(message *model.Message)error
 }
 
 type messageRepository struct {
@@ -33,6 +34,12 @@ func (mr *messageRepository)GetMessagesByThreadId(message *[]model.Message,threa
 }
 func (mr *messageRepository)DeleteMessage(message *model.Message)error{
 	if err:=mr.db.Delete(message).Error;err!=nil{
+		return err
+	}
+	return nil
+}
+func (mr *messageRepository)UpdateMessage(message *model.Message)error{
+	if err:=mr.db.Updates(message).Error;err!=nil{
 		return err
 	}
 	return nil
