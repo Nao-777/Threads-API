@@ -12,6 +12,7 @@ type IMessageUsecase interface {
 	CreateMessage(message *model.Message)error
 	GetMessagesByThreadId(threadId string)([]model.Message,error)
 	DeleteMessage(msgId string)error
+	UpdateMessage(message *model.Message)error
 }
 type messageUsecase struct {
 	mr repository.IMessageRepository
@@ -44,6 +45,12 @@ func(mu *messageUsecase)DeleteMessage(msgId string)error{
 		Id: msgId,
 	}
 	if err:=mu.mr.DeleteMessage(&msg);err!=nil{
+		return err
+	}
+	return nil
+}
+func(mu *messageUsecase)UpdateMessage(message *model.Message)error{
+	if err:=mu.mr.UpdateMessage(message);err !=nil{
 		return err
 	}
 	return nil

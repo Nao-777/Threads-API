@@ -8,6 +8,7 @@ import (
 	"threadsAPI/repository"
 	"threadsAPI/router"
 	"threadsAPI/usecase"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -40,11 +41,11 @@ func main() {
 		Url: "#",
 	}
 
-	// msgSample2:=model.Message{
-	// 	Id:"sample1",
-	// 	Message: "repository update test1",
-	// 	UpdateAt: time.Now(),
-	// }
+	msgSample2:=model.Message{
+		Id:"sample2",
+		Message: "repository update test1",
+		UpdateAt: time.Now(),
+	}
 	//messageRepository.DeleteMessage(&msgSample2)
 	
 	// for _,v :=range msgSample1{
@@ -63,6 +64,7 @@ func main() {
 	messageUsecase.CreateMessage(&msgSample)
 	msgSampleUsecase,err:=messageUsecase.GetMessagesByThreadId("09877ae0ccfd4b8e9e0858d117faa4f6")
 	messageUsecase.DeleteMessage("sample1")
+	messageUsecase.UpdateMessage(&msgSample2)
 	if err!=nil{
 		log.Fatal(err)
 	}
