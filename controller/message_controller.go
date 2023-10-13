@@ -12,6 +12,7 @@ import (
 type IMessageController interface {
 	CreateMessage(c echo.Context)error
 	GetMessagesByThreadId(c echo.Context)error
+	DeleteMessage(c echo.Context)error
 }
 type messageController struct {
 	mu usecase.IMessageUsecase
@@ -40,7 +41,17 @@ func (mc *messageController)GetMessagesByThreadId(c echo.Context)error{
 	threadId:=c.Param("threadId")
 	msgs,err:=mc.mu.GetMessagesByThreadId(threadId)
 	if err!=nil{
-		return err
+		return c.JSON(http.StatusBadRequest,err.Error())
 	}
 	return c.JSON(http.StatusBadRequest,msgs)
+}
+func (mc *messageController)DeleteMessage(c echo.Context)error{
+	msg:=model.Message{}
+	if err:=c.Bind(&msg);err!=nil{
+		return err
+	}
+	if err:=mc.mu.DeleteMessage(msg.Id);err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	return c.NoContent(http.StatusOK)
 }
