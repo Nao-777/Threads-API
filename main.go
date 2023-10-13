@@ -28,6 +28,7 @@ func main() {
 	dbConnect := db.OpenPostgresql()
 	dbConnect.AutoMigrate(model.User{})
 	dbConnect.AutoMigrate(model.Thread{})
+	dbConnect.AutoMigrate(model.Message{})
 
 	userRepository := repository.NewUserRepository(dbConnect)
 	threadRepository := repository.NewThreadRpository(dbConnect)
