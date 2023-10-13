@@ -35,17 +35,15 @@ func main() {
 	messageRepository:=repository.NewMessageRepository(dbConnect)
 	
 	//データ作成テスト
-	testThread := model.Thread{
-		ID: "0b233ecfd1f746588e10fdf8bbac1743",
-		// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
-		Title:    "変更1013",
-		Contents: "hennkousitanndasi!",
-	}
+	// testThread := model.Thread{
+	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
+	// 	// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
+	// 	Title:    "変更1013",
+	// 	Contents: "hennkousitanndasi!",
+	// }
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
-
-	threadUsecase.UpdateThread(testThread)
 	
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
