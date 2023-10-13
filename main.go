@@ -41,10 +41,11 @@ func main() {
 		Title:    "変更1013",
 		Contents: "hennkousitanndasi!",
 	}
-	threadRepository.UpdateThread(&testThread)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
+
+	threadUsecase.DeleteThread(testThread)
 	
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
