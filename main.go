@@ -33,30 +33,15 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect)
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
-	// msgSample := model.Message{
-	// 	ThreadId: "09877ae0ccfd4b8e9e0858d117faa4f6",
-	// 	UserId: "f87de508-4ae3-45c5-a652-694facd1c1be",
-	// 	Message: "repository create test1",
-	// 	Url: "#",
-	// }
-
-	// msgSample2:=model.Message{
-	// 	Id:"sample2",
-	// 	Message: "repository update test1",
-	// 	UpdateAt: time.Now(),
-	// }
-	//messageRepository.DeleteMessage(&msgSample2)
 	
-	// for _,v :=range msgSample1{
-	// 	log.Println(v)
-	// }
 	//データ作成テスト
-	// testThread := model.Thread{
-
-	// 	UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
-	// 	Title:    "test",
-	// 	Contents: "testcontents",
-	// }
+	testThread := model.Thread{
+		ID: "6604cd32e1594224bbb638f0090c6093",
+		// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
+		// Title:    "test",
+		// Contents: "testcontents",
+	}
+	threadRepository.DeleteThread(&testThread)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)

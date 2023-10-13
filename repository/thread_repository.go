@@ -11,6 +11,7 @@ type IThreadRepository interface {
 	GetThreadsByUserID(thread *[]model.Thread, userId string) error
 	GetThreadsLimitAndOffset(threads *[]model.Thread, limit int, offset int) error
 	GetThreads(threads *[]model.Thread) error
+	DeleteThread(thread *model.Thread)error
 }
 
 type threadRepository struct {
@@ -55,5 +56,10 @@ func (tr *threadRepository) GetThreads(threads *[]model.Thread) error {
 }
 
 //threadデータの削除
-
+func (tr *threadRepository)DeleteThread(thread *model.Thread)error{
+	if err:=tr.db.Delete(thread).Error;err!=nil{
+		return err
+	}
+	return nil
+}
 //threadデータの更新
