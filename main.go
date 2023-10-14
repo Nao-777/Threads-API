@@ -16,10 +16,10 @@ func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
 	testUser := model.User{
-		ID:       "test1",
-		LoginID:  "testLogin2",
-		Name:     "tester",
-		Password: "password",
+		ID:       "test2",
+		LoginID:  "testLogin3",
+		Name:     "tester変更",
+		Password: "passwordS",
 	}
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
@@ -33,7 +33,7 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect)
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
-	userRepository.DeleteUser(&testUser)
+	userRepository.UpDateUser(&testUser)
 	//データ作成テスト
 	// testThread := model.Thread{
 	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
