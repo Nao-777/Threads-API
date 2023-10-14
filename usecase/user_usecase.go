@@ -17,6 +17,7 @@ import (
 type IUserUsecase interface {
 	SignUp(user model.User) (model.UserResponse, error)
 	Login(user model.User) (string,error)
+	DeleteUser(user model.User)error
 }
 
 // ユーザusecaseの構造体
@@ -92,4 +93,20 @@ func (uc *userUsecase) Login(user model.User) (string,error) {
 	}
 	log.Println("tokenString:"+tokenString)
 	return tokenString,nil
+}
+func(uu *userUsecase)DeleteUser(user model.User)error{
+	loginId := user.LoginID
+	storedUser := model.User{}
+	if err := uu.ur.GetUserByLoginId(&storedUser, loginId); err != nil {
+		return err
+	}
+	//パスワードの認証
+	err := bcrypt.CompareHashAndPassword([]byte(storedUser.Password), []byte(user.Password))
+	if err != nil {
+		return err
+	}
+	if err:=uu.ur.DeleteUser(&user);err!=nil{
+		return err
+	}
+	return nil
 }
