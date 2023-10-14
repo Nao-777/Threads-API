@@ -18,6 +18,7 @@ type IUserUsecase interface {
 	SignUp(user model.User) (model.UserResponse, error)
 	Login(user model.User) (string,error)
 	DeleteUser(user model.User)error
+	UpdateUser(user model.User)error
 }
 
 // ユーザusecaseの構造体
@@ -106,6 +107,24 @@ func(uu *userUsecase)DeleteUser(user model.User)error{
 		return err
 	}
 	if err:=uu.ur.DeleteUser(&user);err!=nil{
+		return err
+	}
+	return nil
+}
+func(uu *userUsecase)UpdateUser(user model.User)error{
+	//パスワードをハッシュ化
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	if err != nil {
+		return err
+	}
+	updateUser:=model.User{
+		ID: user.ID,
+		LoginID: user.LoginID,
+		Name: user.Name,
+		Password: string(hash),
+		UpdateAt: time.Now(),
+	}
+	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{
 		return err
 	}
 	return nil

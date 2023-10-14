@@ -16,9 +16,9 @@ func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
 	testUser := model.User{
-		ID:       "e5fa2838446b4a7880689981a73b8f8f",
-		LoginID:  "deleteusesr",
-		Password: "deleteusesr",
+		ID:       "test2",
+		LoginID:  "testLogin3",
+		Password: "passwordS",
 	}
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
@@ -43,7 +43,7 @@ func main() {
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 
-	if err:=userUsecase.DeleteUser(testUser);err!=nil{
+	if err:=userUsecase.UpdateUser(testUser);err!=nil{
 		log.Fatal(err)
 	}
 	
