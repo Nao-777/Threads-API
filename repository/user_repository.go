@@ -10,6 +10,7 @@ import (
 type IUserRepository interface {
 	GetUserByLoginId(user *model.User, loginId string) error
 	InsertUser(user *model.User) error
+	DeleteUser(user *model.User)error
 }
 
 // ユーザリポジトリの構造体
@@ -34,6 +35,12 @@ func (ur *userRepository) GetUserByLoginId(user *model.User, loginId string) err
 // ユーザ情報の追加
 func (ur *userRepository) InsertUser(user *model.User) error {
 	if err := ur.db.Create(user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func (ur *userRepository)DeleteUser(user *model.User)error{
+	if err:=ur.db.Delete(user).Error;err!=nil{
 		return err
 	}
 	return nil
