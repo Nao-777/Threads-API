@@ -15,11 +15,18 @@ import (
 func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
-	testUser := model.User{
-		ID:       "test2",
-		LoginID:  "testLogin3",
-		Password: "passwordS",
-	}
+	// testUser := model.User{
+	// 	ID:       "test2",
+	// 	LoginID:  "testLogin3",
+	// 	Password: "passwordS",
+	// }
+	//データ作成テスト
+	// testThread := model.Thread{
+	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
+	// 	// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
+	// 	Title:    "変更1013",
+	// 	Contents: "hennkousitanndasi!",
+	// }
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal(err)
@@ -32,20 +39,10 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect)
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
-	//データ作成テスト
-	// testThread := model.Thread{
-	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
-	// 	// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
-	// 	Title:    "変更1013",
-	// 	Contents: "hennkousitanndasi!",
-	// }
+	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
-
-	if err:=userUsecase.UpdateUser(testUser);err!=nil{
-		log.Fatal(err)
-	}
 	
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
