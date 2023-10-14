@@ -16,6 +16,7 @@ type IUserController interface {
 	LogOut(c echo.Context)error
 	CsrfToken(c echo.Context)error
 	DeleteUser(c echo.Context)error
+	UpdateUser(c echo.Context)error
 }
 
 type userController struct {
@@ -103,5 +104,15 @@ func (uc *userController)DeleteUser(c echo.Context)error{
 	cookie.HttpOnly=true
 	cookie.SameSite=http.SameSiteNoneMode
 	c.SetCookie(cookie)
+	return c.NoContent(http.StatusOK)
+}
+func(uc *userController)UpdateUser(c echo.Context)error{
+	user:=model.User{}
+	if err:=c.Bind(&user);err !=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	if err:=uc.uu.UpdateUser(user);err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
 	return c.NoContent(http.StatusOK)
 }
