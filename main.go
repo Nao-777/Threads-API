@@ -15,11 +15,12 @@ import (
 func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
-	// testUser := model.User{
-	// 	ID:       "test2",
-	// 	LoginID:  "testLogin3",
-	// 	Password: "passwordS",
-	// }
+	testUser := model.User{
+		// ID:       "test2",
+		// LoginID:  "testLogin3",
+		// Password: "passwordS",
+		ImageUrl: "./sampleImg/firebasetest.jpg",
+	}
 	//データ作成テスト
 	// testThread := model.Thread{
 	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
@@ -31,14 +32,17 @@ func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal(err)
 	}
+	fbStorage:=db.OpenFireStorage()
 	dbConnect := db.OpenPostgresql()
 	dbConnect.AutoMigrate(model.User{})
 	dbConnect.AutoMigrate(model.Thread{})
 	dbConnect.AutoMigrate(model.Message{})
 
-	userRepository := repository.NewUserRepository(dbConnect)
+	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
+
+	userRepository.PostUserImg(&testUser)
 	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)

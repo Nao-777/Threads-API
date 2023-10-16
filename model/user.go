@@ -8,6 +8,7 @@ type User struct {
 	LoginID   string    `json:"login_id" gorm:"unique"`
 	Name      string    `json:"name"`
 	Password  string    `json:"password"`
+	ImageUrl string `json:"url"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }
