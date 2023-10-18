@@ -17,6 +17,7 @@ import (
 
 // ユーザusecaseのインターフェース
 type IUserUsecase interface {
+	GetUser(user *model.User)error
 	SignUp(user model.User) (model.UserResponse, error)
 	Login(user model.User) (string,error)
 	DeleteUser(user model.User)error
@@ -32,6 +33,18 @@ type userUsecase struct {
 // ユーザusecaseのコンストラクタ
 func NewUserUsecase(ur repository.IUserRepository) IUserUsecase {
 	return &userUsecase{ur}
+}
+func(uc *userUsecase)GetUser(user *model.User)error{
+	if err:=uc.ur.GetUser(user);err!=nil{
+		return err
+	}
+	imgBytes,err:=uc.ur.GetUserImg(user)
+	if err!=nil{
+		return err
+	}
+	imgB64:=b64.StdEncoding.EncodeToString(imgBytes)
+	user.ImageUrl=imgB64
+	return nil
 }
 
 // サインアップ

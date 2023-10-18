@@ -7,7 +7,6 @@ import (
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/router"
-	samplemethod "threadsAPI/sampleMethod"
 	"threadsAPI/usecase"
 
 	"github.com/joho/godotenv"
@@ -16,12 +15,12 @@ import (
 func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
-	img:=samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
+	//img:=samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
 	testUser := model.User{
 		ID:       "test2",
 		// LoginID:  "testLogin3",
 		// Password: "passwordS",
-		ImageUrl: img,
+		//ImageUrl: img,
 	}
 	//データ作成テスト
 	// testThread := model.Thread{
@@ -52,10 +51,8 @@ func main() {
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	
-	if err:=userUsecase.PostUserImg(testUser);err!=nil{
-		log.Fatal(err)
-	}
-
+	userUsecase.GetUser(&testUser)
+	log.Println(testUser.ImageUrl)
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
 	messageController:=controller.NewMessageController(messageUsecase)
