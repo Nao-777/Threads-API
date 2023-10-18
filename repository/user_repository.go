@@ -12,6 +12,7 @@ import (
 
 // ユーザリポジトリのインターフェース
 type IUserRepository interface {
+	GetUser(user *model.User)error
 	GetUserByLoginId(user *model.User, loginId string) error
 	InsertUser(user *model.User) error
 	DeleteUser(user *model.User)error
@@ -35,6 +36,12 @@ func NewUserRepository(db *gorm.DB,fbstorage *storage.BucketHandle) IUserReposit
 func (ur *userRepository) GetUserByLoginId(user *model.User, loginId string) error {
 	//loginIdを基にユーザを特定
 	if err := ur.db.Where("login_id=?", loginId).First(&user).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func(ur *userRepository)GetUser(user *model.User)error{
+	if err :=ur.db.First(&user).Error;err!=nil{
 		return err
 	}
 	return nil
@@ -63,8 +70,6 @@ func(ur *userRepository)UpDateUser(user *model.User)error{
 func(ur *userRepository)PostUserImg(user *model.User,img []byte)error{
 	ctx:=context.Background()
 	//storageで保管する画像の名前
-	//仮
-	log.Println("postUserImg repository")
 	writer:=ur.fbstorage.Object(user.ImageUrl).NewWriter(ctx)
 	writer.ObjectAttrs.ContentType="image/jpg"
 	writer.ObjectAttrs.CacheControl="no-cache"
