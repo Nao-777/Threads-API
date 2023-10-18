@@ -42,7 +42,8 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
 
-	userRepository.PostUserImg(&testUser)
+	//userRepository.PostUserImg(&testUser)
+	userRepository.GetUserImg(&testUser)
 	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
