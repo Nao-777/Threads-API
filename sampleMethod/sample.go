@@ -29,3 +29,10 @@ func ImgEndode(path string) string {
 	log.Println(sEnc)
 	return sEnc
 }
+func ImgDecode(imgBase64 string)[]byte{
+	uDec,err:=b64.StdEncoding.DecodeString(imgBase64)
+	if err!=nil{
+		log.Fatal(err)
+	}
+	return uDec
+}

@@ -45,8 +45,8 @@ func main() {
 
 	//userRepository.PostUserImg(&testUser)
 	//userRepository.GetUserImg(&testUser)
-	samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
-	
+	img:=samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
+	samplemethod.ImgDecode(img)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
