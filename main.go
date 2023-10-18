@@ -16,12 +16,13 @@ import (
 func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
-	// testUser := model.User{
-	// 	// ID:       "test2",
-	// 	// LoginID:  "testLogin3",
-	// 	// Password: "passwordS",
-	// 	ImageUrl: "./sampleImg/firebasetest.jpg",
-	// }
+	img:=samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
+	testUser := model.User{
+		ID:       "test2",
+		// LoginID:  "testLogin3",
+		// Password: "passwordS",
+		ImageUrl: img,
+	}
 	//データ作成テスト
 	// testThread := model.Thread{
 	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
@@ -45,12 +46,16 @@ func main() {
 
 	//userRepository.PostUserImg(&testUser)
 	//userRepository.GetUserImg(&testUser)
-	img:=samplemethod.ImgEndode("./sampleImg/firebasetest.jpg")
-	samplemethod.ImgDecode(img)
+	
+	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	
+	if err:=userUsecase.PostUserImg(testUser);err!=nil{
+		log.Fatal(err)
+	}
+
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
 	messageController:=controller.NewMessageController(messageUsecase)

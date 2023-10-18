@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	b64 "encoding/base64"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -19,6 +21,7 @@ type IUserUsecase interface {
 	Login(user model.User) (string,error)
 	DeleteUser(user model.User)error
 	UpdateUser(user model.User)error
+	PostUserImg(user model.User)error
 }
 
 // ユーザusecaseの構造体
@@ -123,6 +126,27 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 		Name: user.Name,
 		Password: string(hash),
 		UpdateAt: time.Now(),
+	}
+	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{
+		return err
+	}
+	return nil
+}
+func(uu *userUsecase)PostUserImg(user model.User)error{
+	//user avaterをデコード
+	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	if err!=nil{
+		log.Fatal(err)
+	}
+    remoteFileName:="avaterImg"
+	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
+	updateUser:=model.User{
+		ID: user.ID,
+		ImageUrl: remoteFilePath,
+		UpdateAt: time.Now(),
+	}
+	if err:=uu.ur.PostUserImg(&updateUser,uDec);err!=nil{
+		return err
 	}
 	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{
 		return err

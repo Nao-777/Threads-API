@@ -4,7 +4,6 @@ import (
 	"context"
 	"io"
 	"log"
-	"os"
 	"threadsAPI/model"
 
 	"cloud.google.com/go/storage"
@@ -17,7 +16,7 @@ type IUserRepository interface {
 	InsertUser(user *model.User) error
 	DeleteUser(user *model.User)error
 	UpDateUser(user *model.User)error
-	PostUserImg(user *model.User)error
+	PostUserImg(user *model.User,img []byte)error
 	GetUserImg(user *model.User)error
 }
 
@@ -61,25 +60,18 @@ func(ur *userRepository)UpDateUser(user *model.User)error{
 	return nil
 }
 
-func(ur *userRepository)PostUserImg(user *model.User)error{
+func(ur *userRepository)PostUserImg(user *model.User,img []byte)error{
 	ctx:=context.Background()
 	//storageで保管する画像の名前
 	//仮
-	remoteFileName:="asdfgh_"+user.ImageUrl
-	writer:=ur.fbstorage.Object(remoteFileName).NewWriter(ctx)
+	log.Println("postUserImg repository")
+	writer:=ur.fbstorage.Object(user.ImageUrl).NewWriter(ctx)
 	writer.ObjectAttrs.ContentType="image/jpg"
 	writer.ObjectAttrs.CacheControl="no-cache"
-	f,err:=os.Open(user.ImageUrl)
-	if err!=nil{
+	if _,err:=writer.Write(img);err!=nil{
 		return err
 	}
-	if _,err:=io.Copy(writer,f);err!=nil{
-		return err
-	}
-	defer f.Close()
-	if err:=writer.Close();err!=nil{
-		return err
-	}
+	defer writer.Close()
 	return nil
 }
 func (ur *userRepository)GetUserImg(user *model.User)error{
