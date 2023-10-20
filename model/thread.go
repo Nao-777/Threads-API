@@ -8,6 +8,7 @@ type Thread struct {
 	UserId    string    `json:"user_id" gorm:"not null"`
 	Title     string    `json:"title"`
 	Contents  string    `json:"contents"`
+	ImageUrl string `json:"url"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }

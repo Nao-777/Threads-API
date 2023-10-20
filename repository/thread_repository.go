@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"context"
 	"threadsAPI/model"
 
+	"cloud.google.com/go/storage"
 	"gorm.io/gorm"
 )
 
@@ -13,14 +15,16 @@ type IThreadRepository interface {
 	GetThreads(threads *[]model.Thread) error
 	DeleteThread(thread *model.Thread)error
 	UpdateThread(thread *model.Thread)error
+	PostThreadImg(thread *model.Thread,img []byte)error
 }
 
 type threadRepository struct {
 	db *gorm.DB
+	fbstorage *storage.BucketHandle
 }
 
-func NewThreadRpository(db *gorm.DB) IThreadRepository {
-	return &threadRepository{db}
+func NewThreadRpository(db *gorm.DB,fbstorage *storage.BucketHandle) IThreadRepository {
+	return &threadRepository{db,fbstorage}
 }
 
 // threadデータの作成
@@ -68,5 +72,17 @@ func (tr *threadRepository)UpdateThread(thread *model.Thread)error{
 	if err:=tr.db.Updates(thread).Error;err!=nil{
 		return err
 	}
+	return nil
+}
+func(tr *threadRepository)PostThreadImg(thread *model.Thread,img []byte)error{
+	ctx:=context.Background()
+	//storageで保管する画像の名前
+	writer:=tr.fbstorage.Object("/test/").NewWriter(ctx)
+	writer.ObjectAttrs.ContentType="image/jpg"
+	writer.ObjectAttrs.CacheControl="no-cache"
+	if _,err:=writer.Write(img);err!=nil{
+		return err
+	}
+	defer writer.Close()
 	return nil
 }

@@ -17,19 +17,19 @@ func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
 	img:=samplemethod.ImgEndode("./sampleImg/tester2.jpg")
-	testUser := model.User{
-		ID:       "test2",
-		// LoginID:  "testLogin3",
-		// Password: "passwordS",
-		ImageUrl: img,
-	}
-	//データ作成テスト
-	// testThread := model.Thread{
-	// 	ID: "0b233ecfd1f746588e10fdf8bbac1743",
-	// 	// UserId:   "f87de508-4ae3-45c5-a652-694facd1c1be",
-	// 	Title:    "変更1013",
-	// 	Contents: "hennkousitanndasi!",
+	// testUser := model.User{
+	// 	ID:       "test2",
+	// 	// LoginID:  "testLogin3",
+	// 	// Password: "passwordS",
+	// 	ImageUrl: img,
 	// }
+	//データ作成テスト
+	testThread := model.Thread{
+		ID: "1d4ff667cfd4491b80f3591e8f9acc13",
+		UserId:   "098333a4aafd46d78cb4511079c8583c",
+		// Title:    "変更1013",
+		// Contents: "hennkousitanndasi!",
+	}
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal(err)
@@ -41,19 +41,15 @@ func main() {
 	dbConnect.AutoMigrate(model.Message{})
 
 	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
-	threadRepository := repository.NewThreadRpository(dbConnect)
+	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
-
-	//userRepository.PostUserImg(&testUser)
-	//userRepository.GetUserImg(&testUser)
-	
+	t:=samplemethod.ImgDecode(img)
+	threadRepository.PostThreadImg(&testThread,t)
 	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
-	//userUsecase.PostUserImg(testUser)
-	//userUsecase.GetUser(&testUser)
-	log.Println(testUser.ImageUrl)
+	
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
 	messageController:=controller.NewMessageController(messageUsecase)
