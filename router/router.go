@@ -39,6 +39,7 @@ func NewRouter(uc controller.IUserController, tc controller.IThreadController,mc
 	e.POST("/signup", uc.SignUp)
 	e.POST("/login", uc.Login)
 	e.POST("/logout",uc.LogOut)
+	e.GET("/",uc.GetUser)
 	e.DELETE("/",uc.DeleteUser)
 	e.PUT("/",uc.UpdateUser)
 	e.GET("/csrf",uc.CsrfToken)

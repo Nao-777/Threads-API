@@ -8,6 +8,7 @@ import (
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
+	samplemethod "threadsAPI/sampleMethod"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -17,7 +18,7 @@ import (
 
 // ユーザusecaseのインターフェース
 type IUserUsecase interface {
-	GetUser(user *model.User)error
+	GetUser(user model.User)(model.UserResponse, error)
 	SignUp(user model.User) (model.UserResponse, error)
 	Login(user model.User) (string,error)
 	DeleteUser(user model.User)error
@@ -34,21 +35,29 @@ type userUsecase struct {
 func NewUserUsecase(ur repository.IUserRepository) IUserUsecase {
 	return &userUsecase{ur}
 }
-func(uc *userUsecase)GetUser(user *model.User)error{
-	if err:=uc.ur.GetUser(user);err!=nil{
-		return err
+//
+func(uc *userUsecase)GetUser(user model.User)(model.UserResponse, error){
+	
+	if err:=uc.ur.GetUser(&user);err!=nil{
+		return model.UserResponse{},err
 	}
-	imgBytes,err:=uc.ur.GetUserImg(user)
+	imgBytes,err:=uc.ur.GetUserImg(&user)
 	if err!=nil{
-		return err
+		return model.UserResponse{},err
 	}
 	imgB64:=b64.StdEncoding.EncodeToString(imgBytes)
-	user.ImageUrl=imgB64
-	return nil
+	resUser:=model.UserResponse{
+		ID: user.ID,
+		LoginID: user.LoginID,
+		Name: user.Name,
+		ImageUrl: imgB64,
+		CreatedAt: user.CreatedAt,
+	}
+	return resUser,nil
 }
 
 // サインアップ
-func (uc *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
+func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	//パスワードをハッシュ化
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 	if err != nil {
@@ -61,19 +70,36 @@ func (uc *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	}
 	//ハイフンを除去、文字列にした値をユーザIDとして登録
 	userId := strings.Replace(userUUId.String(), "-", "", -1)
+	//user avaterをデコード
+	if user.ImageUrl==""{
+		user.ImageUrl=samplemethod.ImgEndode("sampleImg/noimage.jpeg")
+	}
+	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	if err!=nil{
+		log.Fatal(err)
+	}
+    remoteFileName:="avaterImg"
+	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",userId,remoteFileName)
 	//入力されたユーザの情報を登録
 	newUser := model.User{
 		ID:       userId,
 		LoginID:  user.LoginID,
 		Name:     user.Name,
+		ImageUrl: remoteFilePath,
 		Password: string(hash),
 	}
-	if err := uc.ur.InsertUser(&newUser); err != nil {
+	if err:=uu.ur.PostUserImg(&newUser,uDec);err!=nil{
+		return model.UserResponse{},err
+	}
+	if err := uu.ur.InsertUser(&newUser); err != nil {
 		return model.UserResponse{}, err
 	}
 	resposeData := model.UserResponse{
 		ID:   newUser.ID,
+		LoginID: newUser.LoginID,
 		Name: newUser.Name,
+		ImageUrl:newUser.ImageUrl,
+		CreatedAt: newUser.CreatedAt,
 	}
 	return resposeData, nil
 }

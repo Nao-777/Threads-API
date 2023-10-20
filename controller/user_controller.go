@@ -17,6 +17,7 @@ type IUserController interface {
 	CsrfToken(c echo.Context)error
 	DeleteUser(c echo.Context)error
 	UpdateUser(c echo.Context)error
+	GetUser(c echo.Context)error
 }
 
 type userController struct {
@@ -25,6 +26,17 @@ type userController struct {
 
 func NewUserController(uu usecase.IUserUsecase) IUserController {
 	return &userController{uu}
+}
+func(uc *userController)GetUser(c echo.Context)error{
+	user:=model.User{}
+	if err:=c.Bind(&user);err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	userRes,err:=uc.uu.GetUser(user)
+	if err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	return c.JSON(http.StatusCreated, userRes)
 }
 
 // サインアップ

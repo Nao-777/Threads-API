@@ -16,5 +16,8 @@ type User struct {
 //レスポンスデータ用
 type UserResponse struct {
 	ID   string `json:"id"`
+	LoginID string `json:"login_id"`
 	Name string `json:"name"`
+	ImageUrl string `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
 }
