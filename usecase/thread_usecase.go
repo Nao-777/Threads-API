@@ -93,17 +93,26 @@ func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam
 		return []model.ResThread{}, err
 	}
 	//res用の構造体に値を格納
-	for _,thread:=range threads{
+	for _,thread :=range threads{
+		if thread.ImageUrl!=""{
+			imgBytes,err:=tu.tr.GetThreadImg(&thread)
+			if err!=nil{
+				return []model.ResThread{},err
+			}
+			thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
+		}
+
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
 			LoginID: thread.User.LoginID,
 			Title: thread.Title,
 			Contents: thread.Contents,
+			ImageUrl: thread.ImageUrl,
 			CreatedAt: thread.CreatedAt,
 		}
 		resThreads = append(resThreads, resThread)
-	}
+	} 
 	return resThreads, nil
 }
 func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
