@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"io"
+	"log"
 	"threadsAPI/model"
 
 	"cloud.google.com/go/storage"
@@ -16,6 +18,7 @@ type IThreadRepository interface {
 	DeleteThread(thread *model.Thread)error
 	UpdateThread(thread *model.Thread)error
 	PostThreadImg(thread *model.Thread,img []byte)error
+	GetThreadImg(thread *model.Thread)([]byte,error)
 }
 
 type threadRepository struct {
@@ -85,4 +88,18 @@ func(tr *threadRepository)PostThreadImg(thread *model.Thread,img []byte)error{
 	}
 	defer writer.Close()
 	return nil
+}
+func(tr *threadRepository)GetThreadImg(thread *model.Thread)([]byte,error){
+	ctx:=context.Background()
+	rc,err:=tr.fbstorage.Object(thread.ImageUrl).NewReader(ctx)
+	if err!=nil{
+		return nil,err
+	}
+	defer rc.Close()
+	data,err:=io.ReadAll(rc)
+	if err!=nil{
+		return nil,err
+	}
+	log.Printf("Download contents: %dbyte\n",len(data))
+	return data,err
 }
