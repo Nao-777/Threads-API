@@ -77,7 +77,7 @@ func (tr *threadRepository)UpdateThread(thread *model.Thread)error{
 func(tr *threadRepository)PostThreadImg(thread *model.Thread,img []byte)error{
 	ctx:=context.Background()
 	//storageで保管する画像の名前
-	writer:=tr.fbstorage.Object("/test/").NewWriter(ctx)
+	writer:=tr.fbstorage.Object(thread.ImageUrl).NewWriter(ctx)
 	writer.ObjectAttrs.ContentType="image/jpg"
 	writer.ObjectAttrs.CacheControl="no-cache"
 	if _,err:=writer.Write(img);err!=nil{

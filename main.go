@@ -25,10 +25,11 @@ func main() {
 	// }
 	//データ作成テスト
 	testThread := model.Thread{
-		ID: "1d4ff667cfd4491b80f3591e8f9acc13",
+		//ID: "1d4ff667cfd4491b80f3591e8f9acc13",
 		UserId:   "098333a4aafd46d78cb4511079c8583c",
 		// Title:    "変更1013",
 		// Contents: "hennkousitanndasi!",
+		ImageUrl: img,
 	}
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
@@ -43,13 +44,15 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
 	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect)
-	t:=samplemethod.ImgDecode(img)
-	threadRepository.PostThreadImg(&testThread,t)
+	// t:=samplemethod.ImgDecode(img)
+	// threadRepository.PostThreadImg(&testThread,t)
 	
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	
+	threadUsecase.CreateThread(&testThread)
+
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
 	messageController:=controller.NewMessageController(messageUsecase)

@@ -1,6 +1,9 @@
 package usecase
 
 import (
+	b64 "encoding/base64"
+	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"threadsAPI/model"
@@ -33,9 +36,22 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 	if err != nil {
 		return err
 	}
-	//ハイフンを除去、文字列にした値をユーザIDとして登録
 	threadId := strings.Replace(threadUUId.String(), "-", "", -1)
 	thread.ID = threadId
+
+	if thread.ImageUrl!=""{
+		uDec,err:=b64.StdEncoding.DecodeString(thread.ImageUrl)
+		if err!=nil{
+			log.Fatal(err)
+		}
+		remoteFileName:="threadImg"
+		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
+		thread.ImageUrl=remoteFilePath
+		if err:=tu.tr.PostThreadImg(thread,uDec);err!=nil{
+			return err
+		}
+	}
+	
 	if err := tu.tr.CreateThread(thread); err != nil {
 		return err
 	}
@@ -113,3 +129,4 @@ func(tu *threadUsecase)UpdateThread(thread model.Thread)error{
 	}
 	return nil
 }
+
