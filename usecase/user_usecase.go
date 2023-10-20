@@ -133,12 +133,23 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 	if err != nil {
 		return err
 	}
+	//user avaterをデコード
+	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	if err!=nil{
+		log.Fatal(err)
+	}
+    remoteFileName:="avaterImg"
+	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
 	updateUser:=model.User{
 		ID: user.ID,
 		LoginID: user.LoginID,
 		Name: user.Name,
 		Password: string(hash),
+		ImageUrl: remoteFilePath,
 		UpdateAt: time.Now(),
+	}
+	if err:=uu.ur.PostUserImg(&updateUser,uDec);err!=nil{
+		return err
 	}
 	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{
 		return err
