@@ -18,5 +18,6 @@ type ResThread struct{
 	LoginID string `json:"login_id"`
 	Title     string    `json:"title"`
 	Contents  string    `json:"contents"`
+	ImageUrl string `json:"url"`
 	CreatedAt time.Time `json:"created_at"`
 }

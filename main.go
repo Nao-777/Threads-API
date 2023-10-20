@@ -7,6 +7,7 @@ import (
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/router"
+	"threadsAPI/utility"
 
 	"threadsAPI/usecase"
 
@@ -46,9 +47,9 @@ func main() {
 	messageRepository:=repository.NewMessageRepository(dbConnect)
 	// t:=samplemethod.ImgDecode(img)
 	// threadRepository.PostThreadImg(&testThread,t)
-	
+	util:=utility.NewUtility()
 	userUsecase := usecase.NewUserUsecase(userRepository)
-	threadUsecase := usecase.NewThreadUsecase(threadRepository)
+	threadUsecase := usecase.NewThreadUsecase(threadRepository,util)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
 	
 	//threadUsecase.CreateThread(&testThread)

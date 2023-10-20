@@ -8,13 +8,14 @@ import (
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
+	"threadsAPI/utility"
 
 	"github.com/google/uuid"
 )
 
 type IThreadUsecase interface {
 	CreateThread(thread *model.Thread) error
-	GetThreadsByUserID(userId string) ([]model.Thread, error)
+	//GetThreadsByUserID(userId string) ([]model.Thread, error)
 	GetThreadsLimitAndOffset(limit string, offset string) ([]model.ResThread, error)
 	GetThreads() ([]model.ResThread, error)
 	DeleteThread(thread model.Thread)error
@@ -22,10 +23,11 @@ type IThreadUsecase interface {
 }
 type threadUsecase struct {
 	tr repository.IThreadRepository
+	ut utility.IUtility
 }
 
-func NewThreadUsecase(tr repository.IThreadRepository) IThreadUsecase {
-	return &threadUsecase{tr}
+func NewThreadUsecase(tr repository.IThreadRepository,ut utility.IUtility) IThreadUsecase {
+	return &threadUsecase{tr,ut}
 }
 
 // threadデータの作成
@@ -51,21 +53,28 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 			return err
 		}
 	}
-	
+
 	if err := tu.tr.CreateThread(thread); err != nil {
 		return err
 	}
 	return nil
 }
 
-// threadデータの取得（userID）
-func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, error) {
-	threads := []model.Thread{}
-	if err := tu.tr.GetThreadsByUserID(&threads, userId); err != nil {
-		return []model.Thread{}, err
-	}
-	return threads, nil
-}
+// // threadデータの取得（userID）
+// func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, error) {
+// 	threads := []model.Thread{}
+// 	if err := tu.tr.GetThreadsByUserID(&threads, userId); err != nil {
+// 		return []model.Thread{}, err
+// 	}
+// 	for _,thread :=range threads{
+// 		imgBytes,err:=tu.tr.GetThreadImg(&thread)
+// 		if err!=nil{
+// 			return []model.Thread{},err
+// 		}
+// 		thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
+// 	} 
+// 	return threads, nil
+// }
 
 // threadデータの取得
 func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam string) ([]model.ResThread, error) {
@@ -103,18 +112,26 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 	if err := tu.tr.GetThreads(&threads); err != nil {
 		return []model.ResThread{}, err
 	}
-	//res用の構造体に値を格納
-	for _,thread:=range threads{
+	for _,thread :=range threads{
+		if thread.ImageUrl!=""{
+			imgBytes,err:=tu.tr.GetThreadImg(&thread)
+			if err!=nil{
+				return []model.ResThread{},err
+			}
+			thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
+		}
+
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
 			LoginID: thread.User.LoginID,
 			Title: thread.Title,
 			Contents: thread.Contents,
+			ImageUrl: thread.ImageUrl,
 			CreatedAt: thread.CreatedAt,
 		}
 		resThreads = append(resThreads, resThread)
-	}
+	} 
 	return resThreads, nil
 }
 func (tu *threadUsecase)DeleteThread(thread model.Thread)error{
