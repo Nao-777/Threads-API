@@ -150,6 +150,18 @@ func (tu *threadUsecase)DeleteThread(thread model.Thread)error{
 	return nil
 }
 func(tu *threadUsecase)UpdateThread(thread model.Thread)error{
+	if thread.ImageUrl!=""{
+		imgBytes,err:=tu.ut.ImgDecode(thread.ImageUrl)
+		if err !=nil{
+			return err
+		}
+		remoteFileName:="threadImg"
+		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
+		thread.ImageUrl=remoteFilePath
+		if err:=tu.tr.PostThreadImg(&thread,imgBytes);err!=nil{
+			return err
+		}
+	}
 	if err:=tu.tr.UpdateThread(&thread);err!=nil{
 		return err
 	}

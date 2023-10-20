@@ -12,7 +12,7 @@ import (
 
 type IThreadController interface {
 	CreateThread(c echo.Context) error
-	GetThreadsByUserID(c echo.Context) error
+	//GetThreadsByUserID(c echo.Context) error
 	GetThreads(c echo.Context) error
 	DeleteThread(c echo.Context)error
 	UpdateThread(c echo.Context)error
@@ -39,18 +39,18 @@ func (tc *threadController) CreateThread(c echo.Context) error {
 }
 
 // threadデータの取得(ユーザID)
-func (tc *threadController) GetThreadsByUserID(c echo.Context) error {
-	userId := c.Param("id")
-	log.Printf("%s", userId)
-	threads, err := tc.tu.GetThreadsByUserID(userId)
-	if err != nil {
-		return err
-	}
-	for _, v := range threads {
-		log.Printf("%+v\n", v)
-	}
-	return c.JSON(http.StatusOK, threads)
-}
+// func (tc *threadController) GetThreadsByUserID(c echo.Context) error {
+// 	userId := c.Param("id")
+// 	log.Printf("%s", userId)
+// 	threads, err := tc.tu.GetThreadsByUserID(userId)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	for _, v := range threads {
+// 		log.Printf("%+v\n", v)
+// 	}
+// 	return c.JSON(http.StatusOK, threads)
+// }
 
 // threadデータの取得
 func (tc *threadController) GetThreads(c echo.Context) error {

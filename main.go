@@ -7,6 +7,7 @@ import (
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/router"
+	samplemethod "threadsAPI/sampleMethod"
 	"threadsAPI/utility"
 
 	"threadsAPI/usecase"
@@ -17,7 +18,7 @@ import (
 func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
-	//img:=samplemethod.ImgEndode("./sampleImg/tester2.jpg")
+	img:=samplemethod.ImgEndode("./sampleImg/tester2.jpg")
 	// testUser := model.User{
 	// 	ID:       "test2",
 	// 	// LoginID:  "testLogin3",
@@ -30,7 +31,7 @@ func main() {
 		UserId:   "098333a4aafd46d78cb4511079c8583c",
 		// Title:    "変更1013",
 		// Contents: "hennkousitanndasi!",
-		ImageUrl: "threads/9d91f02368e2447db5439557f772eb60/main/threadImg",
+		ImageUrl: img,
 	}
 	//開発時だけ読み込むようにしたい
 	if err := godotenv.Load(".env"); err != nil {
@@ -51,11 +52,8 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository,util)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository)
-	
-	//threadUsecase.CreateThread(&testThread)
-	if _,err:=threadRepository.GetThreadImg(&testThread);err!=nil{
-		log.Fatal(err)
-	}
+
+	threadUsecase.UpdateThread(testThread)
 
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)

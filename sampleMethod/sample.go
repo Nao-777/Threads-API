@@ -26,7 +26,7 @@ func ImgEndode(path string) string {
 	imgBytes:=bf.Bytes()
 
 	sEnc:=b64.StdEncoding.EncodeToString(imgBytes)
-	log.Println(sEnc)
+	//log.Println(sEnc)
 	return sEnc
 }
 func ImgDecode(imgBase64 string)[]byte{
