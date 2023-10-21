@@ -8,7 +8,7 @@ type Message struct{
 	User      User      `json:"user" gorm:"foreignKey:UserId; constraint:OnUpdate:CASCADE,onDelete:CASCADE"`
 	UserId    string    `json:"user_id" gorm:"not null"`
 	Message string `json:"message"`
-	Url string `json:"url"`
+	ImageUrl string `json:"url"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }
