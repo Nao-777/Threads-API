@@ -10,6 +10,9 @@ import (
 func TestThreadValidate(t *testing.T) {
 	tv:=NewThreadValidation()
 	img,err:=utility.NewUtility().ImgFileEndode("../../sampleImg/tester3_big.jpg")
+	if err!=nil{
+		log.Fatal(err)
+	}
 	img2,err:=utility.NewUtility().ImgFileEndode("../../sampleImg/tester2.jpg")
 	if err!=nil{
 		log.Fatal(err)
