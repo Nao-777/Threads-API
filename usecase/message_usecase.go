@@ -86,6 +86,18 @@ func(mu *messageUsecase)DeleteMessage(msgId string)error{
 	return nil
 }
 func(mu *messageUsecase)UpdateMessage(message *model.Message)error{
+	if message.ImageUrl!=""{
+		imgBytes,err:=mu.ut.ImgDecode(message.ImageUrl)
+		if err!=nil{
+			return err
+		}
+		remoteFileName:="msgImg"
+		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
+		message.ImageUrl=remoteFilePath
+		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
+			return err
+		}
+	}
 	if err:=mu.mr.UpdateMessage(message);err !=nil{
 		return err
 	}
