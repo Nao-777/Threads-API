@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"threadsAPI/model"
+	"threadsAPI/utility"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
@@ -39,6 +40,10 @@ func (uv *uservalidation) UserValidate(user model.User)error{
 			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("半角英数字(大文字あり)に一致していません"),
 			validation.By(judgePasswordStrength),
 		),
+		validation.Field(
+			&user.ImageUrl,
+			validation.By(judgeImageSize),
+		),
 	)
 }
 
@@ -61,6 +66,17 @@ func judgePasswordStrength(value interface{})error{
 				return fmt.Errorf("数字がありません")
 			}
 		}
+	}
+	return nil
+}
+func judgeImageSize(value interface{})error{
+	imgStr,_:=value.(string)
+	imgBytes,err:=utility.NewUtility().ImgDecode(imgStr)
+	if err!=nil{
+		return err
+	}
+	if len(imgBytes)>100000{
+		return fmt.Errorf("画像サイズが大きすぎます")
 	}
 	return nil
 }

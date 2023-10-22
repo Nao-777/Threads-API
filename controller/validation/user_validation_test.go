@@ -1,12 +1,18 @@
 package validation
 
 import (
+	"log"
 	"testing"
 	"threadsAPI/model"
+	"threadsAPI/utility"
 )
 
 func TestUserValidate(t *testing.T){
 	uv:=NewUserValidation()
+	img,err:=utility.NewUtility().ImgFileEndode("../../sampleImg/tester3_big.jpg")
+	if err!=nil{
+		log.Fatal(err)
+	}
 	// type testUser struct{
 	// 	LoginID   string
 	// 	Name      string
@@ -133,6 +139,16 @@ func TestUserValidate(t *testing.T){
 				Password: "PAsSPASS",
 			},
 			want:"password: 数字がありません.",
+		},
+		{
+			name:"testcase-Image1",
+			args: model.User{
+				LoginID: "loginID",
+				Name: "田中青",
+				Password: "Password1",
+				ImageUrl: img,
+			},
+			want: "url: 画像サイズが大きすぎます.",
 		},
 	}
 	for _,tt:=range tests{
