@@ -1,9 +1,11 @@
 package usecase
 
 import (
+	"fmt"
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
+	"threadsAPI/utility"
 
 	"github.com/google/uuid"
 )
@@ -16,10 +18,11 @@ type IMessageUsecase interface {
 }
 type messageUsecase struct {
 	mr repository.IMessageRepository
+	ut utility.IUtility
 }
 
-func NewMessageUsecase(mr repository.IMessageRepository)IMessageUsecase{
-	return &messageUsecase{mr}
+func NewMessageUsecase(mr repository.IMessageRepository,ut utility.IUtility)IMessageUsecase{
+	return &messageUsecase{mr,ut}
 }
 func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 	msgUUId,err:=uuid.NewRandom()
@@ -28,11 +31,24 @@ func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 	}
 	msgId:=strings.Replace(msgUUId.String(),"-","",-1)
 	message.Id=msgId
+	if message.ImageUrl!=""{
+		imgBytes,err:=mu.ut.ImgDecode(message.ImageUrl)
+		if err!=nil{
+			return err
+		}
+		remoteFileName:="msgImg"
+		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
+		message.ImageUrl=remoteFilePath
+		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
+			return err
+		}
+	}
 	if err:=mu.mr.CreateMessage(message);err!=nil{
 		return err
 	}
 	return nil
 }
+
 func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.Message,error){
 	msg:=[]model.Message{}
 	if err :=mu.mr.GetMessagesByThreadId(&msg,threadId);err!=nil{

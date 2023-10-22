@@ -13,6 +13,7 @@ type IMessageRepository interface {
 	GetMessagesByThreadId(message *[]model.Message,threadId string)error
 	DeleteMessage(message *model.Message)error
 	UpdateMessage(message *model.Message)error
+	PostMessageImg(message *model.Message,img []byte)error
 }
 
 type messageRepository struct {
