@@ -54,7 +54,7 @@ func main() {
 	// t:=samplemethod.ImgDecode(img)
 	// threadRepository.PostThreadImg(&testThread,t)
 	util:=utility.NewUtility()
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	userUsecase := usecase.NewUserUsecase(userRepository,util)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository,util)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository,util)
 

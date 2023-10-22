@@ -1,14 +1,13 @@
 package usecase
 
 import (
-	b64 "encoding/base64"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"threadsAPI/model"
 	"threadsAPI/repository"
-	samplemethod "threadsAPI/sampleMethod"
+	"threadsAPI/utility"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -29,11 +28,12 @@ type IUserUsecase interface {
 // ユーザusecaseの構造体
 type userUsecase struct {
 	ur repository.IUserRepository
+	ut utility.IUtility
 }
 
 // ユーザusecaseのコンストラクタ
-func NewUserUsecase(ur repository.IUserRepository) IUserUsecase {
-	return &userUsecase{ur}
+func NewUserUsecase(ur repository.IUserRepository,ut utility.IUtility) IUserUsecase {
+	return &userUsecase{ur,ut}
 }
 //
 func(uc *userUsecase)GetUser(user model.User)(model.UserResponse, error){
@@ -45,7 +45,7 @@ func(uc *userUsecase)GetUser(user model.User)(model.UserResponse, error){
 	if err!=nil{
 		return model.UserResponse{},err
 	}
-	imgB64:=b64.StdEncoding.EncodeToString(imgBytes)
+	imgB64:=uc.ut.ImgEndode(imgBytes)
 	resUser:=model.UserResponse{
 		ID: user.ID,
 		LoginID: user.LoginID,
@@ -72,9 +72,13 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	userId := strings.Replace(userUUId.String(), "-", "", -1)
 	//user avaterをデコード
 	if user.ImageUrl==""{
-		user.ImageUrl=samplemethod.ImgEndode("sampleImg/noimage.jpeg")
+		img,err:=uu.ut.ImgFileEndode("sampleImg/noimage.jpeg")
+		if err!=nil{
+			return model.UserResponse{}, err
+		}
+		user.ImageUrl=img
 	}
-	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	uDec,err:=uu.ut.ImgDecode(user.ImageUrl)
 	if err!=nil{
 		log.Fatal(err)
 	}
@@ -160,7 +164,7 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 		return err
 	}
 	//user avaterをデコード
-	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	uDec,err:=uu.ut.ImgDecode(user.ImageUrl)
 	if err!=nil{
 		log.Fatal(err)
 	}
@@ -184,7 +188,7 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 }
 func(uu *userUsecase)PostUserImg(user model.User)error{
 	//user avaterをデコード
-	uDec,err:=b64.StdEncoding.DecodeString(user.ImageUrl)
+	uDec,err:=uu.ut.ImgDecode(user.ImageUrl)
 	if err!=nil{
 		log.Fatal(err)
 	}
