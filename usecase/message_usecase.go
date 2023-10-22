@@ -12,7 +12,7 @@ import (
 
 type IMessageUsecase interface {
 	CreateMessage(message *model.Message)error
-	GetMessagesByThreadId(threadId string)([]model.Message,error)
+	GetMessagesByThreadId(threadId string)([]model.ResMessage,error)
 	DeleteMessage(msgId string)error
 	UpdateMessage(message *model.Message)error
 }
@@ -49,12 +49,32 @@ func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 	return nil
 }
 
-func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.Message,error){
+func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.ResMessage,error){
 	msg:=[]model.Message{}
+	resMsgs:=[]model.ResMessage{}
 	if err :=mu.mr.GetMessagesByThreadId(&msg,threadId);err!=nil{
-		return []model.Message{},err
+		return []model.ResMessage{},err
 	}
-	return msg,nil
+	for _,msg:=range msg{
+		if msg.ImageUrl!=""{
+			imgBytes,err:=mu.mr.GetMessageImg(&msg)
+			if err!=nil{
+				return []model.ResMessage{},err
+			}
+			img:=mu.ut.ImgEndode(imgBytes)
+			msg.ImageUrl=img
+		}
+		resMsg:=model.ResMessage{
+			Id: msg.Id,
+			Name: msg.User.Name,
+			AvatorImg: msg.User.ImageUrl,
+			Message: msg.Message,
+			ImageUrl: msg.ImageUrl,
+			CreatedAt: msg.CreatedAt,
+		}
+		resMsgs=append(resMsgs, resMsg)
+	}
+	return resMsgs,nil
 }
 func(mu *messageUsecase)DeleteMessage(msgId string)error{
 	msg:=model.Message{

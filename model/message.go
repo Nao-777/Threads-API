@@ -12,3 +12,11 @@ type Message struct{
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }
+type ResMessage struct{
+	Id string `json:"id"`
+	Name string `json:"name"`
+	AvatorImg string `json:"avatorImg"`
+	Message string `json:"message"`
+	ImageUrl string `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+}

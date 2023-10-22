@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"io"
+	"log"
 	"threadsAPI/model"
 
 	"cloud.google.com/go/storage"
@@ -14,6 +16,7 @@ type IMessageRepository interface {
 	DeleteMessage(message *model.Message)error
 	UpdateMessage(message *model.Message)error
 	PostMessageImg(message *model.Message,img []byte)error
+	GetMessageImg(message *model.Message)([]byte,error)
 }
 
 type messageRepository struct {
@@ -59,4 +62,19 @@ func(mr *messageRepository)PostMessageImg(message *model.Message,img []byte)erro
 	}
 	defer writer.Close()
 	return nil
+}
+
+func(mr *messageRepository)GetMessageImg(message *model.Message)([]byte,error){
+	ctx:=context.Background()
+	rc,err:=mr.fbstorage.Object(message.ImageUrl).NewReader(ctx)
+	if err!=nil{
+		return nil,err
+	}
+	defer rc.Close()
+	data,err:=io.ReadAll(rc)
+	if err!=nil{
+		return nil,err
+	}
+	log.Printf("Download contents: %dbyte\n",len(data))
+	return data,err
 }
