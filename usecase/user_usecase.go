@@ -153,11 +153,13 @@ func(uu *userUsecase)DeleteUser(user model.User)error{
 	if err != nil {
 		return err
 	}
-	if err:=uu.ur.DeleteUserImg(&user);err!=nil{
-		return err
-	}
 	if err:=uu.ur.DeleteUser(&user);err!=nil{
 		return err
+	}
+	if storedUser.ImageUrl!=""{
+		if err:=uu.ur.DeleteUserImg(&storedUser);err!=nil{
+			return err
+		}
 	}
 	return nil
 }
