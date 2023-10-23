@@ -18,12 +18,12 @@ func main() {
 	//テスト用のuser
 	//echoでhttp接続できるようになるまで
 	//img:=samplemethod.ImgEndode("./sampleImg/tester2.jpg")
-	// testUser := model.User{
-	// 	ID:       "test2",
-	// 	// LoginID:  "testLogin3",
-	// 	// Password: "passwordS",
-	// 	ImageUrl: img,
-	// }
+	testUser := model.User{
+		ID:       "test2",
+		// LoginID:  "testLogin3",
+		// Password: "passwordS",
+		ImageUrl: "users/098333a4aafd46d78cb4511079c8583c/avator/avaterImg",
+	}
 	//データ作成テスト
 	// testThread := model.Thread{
 	// 	ID: "1d4ff667cfd4491b80f3591e8f9acc13",
@@ -51,14 +51,13 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
 	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect,fbStorage)
-	// t:=samplemethod.ImgDecode(img)
-	// threadRepository.PostThreadImg(&testThread,t)
+
+	userRepository.DeleteUserImg(&testUser)
+	
 	util:=utility.NewUtility()
 	userUsecase := usecase.NewUserUsecase(userRepository,util)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository,util)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository,util)
-
-	//messageUsecase.CreateMessage(&testMgs)
 
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)

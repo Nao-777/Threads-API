@@ -19,6 +19,7 @@ type IUserRepository interface {
 	UpDateUser(user *model.User)error
 	PostUserImg(user *model.User,img []byte)error
 	GetUserImg(user *model.User)([]byte,error)
+	DeleteUserImg(user *model.User)error
 }
 
 // ユーザリポジトリの構造体
@@ -92,4 +93,11 @@ func (ur *userRepository)GetUserImg(user *model.User)([]byte,error){
 	}
 	log.Printf("Download contents: %dbyte\n",len(data))
 	return data,err
+}
+func(ur *userRepository)DeleteUserImg(user *model.User)error{
+	ctx:=context.Background()
+	if err:=ur.fbstorage.Object(user.ImageUrl).Delete(ctx);err!=nil{
+		return err
+	}
+	return nil
 }
