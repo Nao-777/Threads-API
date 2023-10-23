@@ -144,6 +144,15 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 	return resThreads, nil
 }
 func (tu *threadUsecase)DeleteThread(thread model.Thread)error{
+	storedThread:=model.Thread{}
+	if err:=tu.tr.GetThread(&storedThread);err!=nil{
+		return err
+	}
+	if storedThread.ImageUrl!=""{
+		if err:=tu.tr.DeleteThreadImg(&storedThread);err!=nil{
+			return err
+		}
+	}
 	if err:=tu.tr.DeleteThread(&thread);err!=nil{
 		return err
 	}

@@ -12,6 +12,7 @@ import (
 
 type IThreadRepository interface {
 	CreateThread(thread *model.Thread) error
+	GetThread(thread *model.Thread)error
 	GetThreadsByUserID(thread *[]model.Thread, userId string) error
 	GetThreadsLimitAndOffset(threads *[]model.Thread, limit int, offset int) error
 	GetThreads(threads *[]model.Thread) error
@@ -19,6 +20,7 @@ type IThreadRepository interface {
 	UpdateThread(thread *model.Thread)error
 	PostThreadImg(thread *model.Thread,img []byte)error
 	GetThreadImg(thread *model.Thread)([]byte,error)
+	DeleteThreadImg(thread *model.Thread)error
 }
 
 type threadRepository struct {
@@ -33,6 +35,12 @@ func NewThreadRpository(db *gorm.DB,fbstorage *storage.BucketHandle) IThreadRepo
 // threadデータの作成
 func (tr *threadRepository) CreateThread(thread *model.Thread) error {
 	if err := tr.db.Create(thread).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func (tr *threadRepository)GetThread(thread *model.Thread)error{
+	if err:=tr.db.First(thread).Error;err!=nil{
 		return err
 	}
 	return nil
@@ -102,4 +110,12 @@ func(tr *threadRepository)GetThreadImg(thread *model.Thread)([]byte,error){
 	}
 	log.Printf("Download contents: %dbyte\n",len(data))
 	return data,err
+}
+
+func(tr *threadRepository)DeleteThreadImg(thread *model.Thread)error{
+	ctx:=context.Background()
+	if err:=tr.fbstorage.Object(thread.ImageUrl).Delete(ctx);err!=nil{
+		return err
+	}
+	return nil
 }
