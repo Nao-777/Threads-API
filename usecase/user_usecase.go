@@ -23,6 +23,7 @@ type IUserUsecase interface {
 	DeleteUser(user model.User)error
 	UpdateUser(user model.User)error
 	PostUserImg(user model.User)error
+	DeleteUserImg(user model.User)error
 }
 
 // ユーザusecaseの構造体
@@ -203,6 +204,27 @@ func(uu *userUsecase)PostUserImg(user model.User)error{
 		return err
 	}
 	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{
+		return err
+	}
+	return nil
+}
+func (uu *userUsecase)DeleteUserImg(user model.User)error{
+	//アバターの削除をした場合は、noimage画像に切り替える
+	img,err:=uu.ut.ImgFileEndode("sampleImg/noimage.jpeg")
+	if err!=nil{
+		return err
+	}
+	uDec,err:=uu.ut.ImgDecode(img)
+	if err!=nil{
+		log.Fatal(err)
+	}
+    remoteFileName:="avaterImg"
+	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
+	user.ImageUrl=remoteFilePath
+	if err:=uu.ur.PostUserImg(&user,uDec);err!=nil{
+		return err
+	}
+	if err := uu.ur.UpDateUser(&user); err != nil {
 		return err
 	}
 	return nil

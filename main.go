@@ -52,12 +52,14 @@ func main() {
 	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect,fbStorage)
 
-	userRepository.DeleteUserImg(&testUser)
+	//userRepository.DeleteUserImg(&testUser)
 	
 	util:=utility.NewUtility()
 	userUsecase := usecase.NewUserUsecase(userRepository,util)
 	threadUsecase := usecase.NewThreadUsecase(threadRepository,util)
 	messageUsecase:=usecase.NewMessageUsecase(messageRepository,util)
+
+	userUsecase.DeleteUserImg(testUser)
 
 	userController := controller.NewUserController(userUsecase)
 	threadController := controller.NewThreadController(threadUsecase)
