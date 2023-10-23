@@ -77,10 +77,17 @@ func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.ResMessag
 	return resMsgs,nil
 }
 func(mu *messageUsecase)DeleteMessage(msgId string)error{
-	msg:=model.Message{
-		Id: msgId,
+	storedMsg:=model.Message{}
+	storedMsg.Id=msgId
+	if err:=mu.mr.GetMessage(&storedMsg);err!=nil{
+		return err
 	}
-	if err:=mu.mr.DeleteMessage(&msg);err!=nil{
+	if storedMsg.ImageUrl!=""{
+		if err :=mu.mr.DeleteMessageImg(&storedMsg);err!=nil{
+			return err
+		}
+	}
+	if err:=mu.mr.DeleteMessage(&storedMsg);err!=nil{
 		return err
 	}
 	return nil

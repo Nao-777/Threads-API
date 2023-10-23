@@ -145,6 +145,7 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 }
 func (tu *threadUsecase)DeleteThread(thread model.Thread)error{
 	storedThread:=model.Thread{}
+	storedThread.ID=thread.ID
 	if err:=tu.tr.GetThread(&storedThread);err!=nil{
 		return err
 	}
