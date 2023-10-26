@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"threadsAPI/constants"
+	"threadsAPI/controller/validation"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
 	"time"
@@ -19,9 +20,10 @@ type IMessageController interface {
 }
 type messageController struct {
 	mu usecase.IMessageUsecase
+	mv validation.IMessageValidation
 }
-func NewMessageController (mu usecase.IMessageUsecase)IMessageController{
-	return &messageController{mu}
+func NewMessageController (mu usecase.IMessageUsecase,mv validation.IMessageValidation)IMessageController{
+	return &messageController{mu,mv}
 }
 func (mc *messageController)CreateMessage(c echo.Context)error{
 	user:=c.Get("user").(*jwt.Token)
@@ -33,6 +35,9 @@ func (mc *messageController)CreateMessage(c echo.Context)error{
 		ThreadId: threadId,
 	}
 	if err:=c.Bind(&msg);err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	if err:=mc.mv.MessageValidate(msg);err!=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())
 	}
 	if err:=mc.mu.CreateMessage(&msg);err!=nil{
@@ -61,6 +66,9 @@ func (mc *messageController)DeleteMessage(c echo.Context)error{
 func(mc *messageController)UpdateMessage(c echo.Context)error{
 	msg:=model.Message{}
 	if err:=c.Bind(&msg);err!=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	if err:=mc.mv.MessageValidate(msg);err!=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())
 	}
 	msg.UpdateAt=time.Now()

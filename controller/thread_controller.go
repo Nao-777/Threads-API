@@ -3,6 +3,7 @@ package controller
 import (
 	"log"
 	"net/http"
+	"threadsAPI/controller/validation"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
 	"time"
@@ -19,17 +20,20 @@ type IThreadController interface {
 }
 type threadController struct {
 	tu usecase.IThreadUsecase
+	tv validation.IThreadValidation
 }
 
-func NewThreadController(tu usecase.IThreadUsecase) IThreadController {
-	return &threadController{tu}
+func NewThreadController(tu usecase.IThreadUsecase,tv validation.IThreadValidation) IThreadController {
+	return &threadController{tu,tv}
 }
 
 // threadデータの作成
 func (tc *threadController) CreateThread(c echo.Context) error {
-	log.Printf("Insert\n")
 	thread := model.Thread{}
 	if err := c.Bind(&thread); err != nil {
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	if err:=tc.tv.ThreadValidate(thread);err!=nil{
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	if err := tc.tu.CreateThread(&thread); err != nil {
@@ -85,6 +89,9 @@ func(tc *threadController)DeleteThread(c echo.Context)error{
 func (tc *threadController)UpdateThread(c echo.Context)error{
 	thread:=model.Thread{}
 	if err:=c.Bind(&thread);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
+	if err:=tc.tv.ThreadValidate(thread);err!=nil{
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	thread.UpdateAt=time.Now()

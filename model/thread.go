@@ -4,7 +4,7 @@ import "time"
 
 type Thread struct {
 	ID        string    `json:"id" gorm:"primaryKey"`
-	User      User      `json:"user" gorm:"foreignKey:UserId; constraint:onDelete:CASCADE"`
+	User      User      `json:"user" gorm:"foreignKey:UserId; constraint:OnUpdate:CASCADE,onDelete:CASCADE"`
 	UserId    string    `json:"user_id" gorm:"not null"`
 	Title     string    `json:"title"`
 	Contents  string    `json:"contents"`

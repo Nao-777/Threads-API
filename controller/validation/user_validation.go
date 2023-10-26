@@ -12,14 +12,27 @@ import (
 
 
 type IUserValidation interface {
-	UserValidate(user model.User)error
+	UserValidate(user model.User,isNameReuire bool)error
 }
 type uservalidation struct{}
 
 func NewUserValidation() IUserValidation{
 	return &uservalidation{}
 }
-func (uv *uservalidation) UserValidate(user model.User)error{
+func (uv *uservalidation) UserValidate(user model.User,isNameReuire bool)error{
+	var nameValidation *validation.FieldRules
+	if isNameReuire{
+		nameValidation=validation.Field(
+			&user.Name,
+			validation.Required.Error("Name is required"),
+			validation.RuneLength(1,24).Error("limited max 24"),
+		)
+	}else{
+		nameValidation=validation.Field(
+			&user.Name,
+			validation.RuneLength(1,24).Error("limited max 24"),
+		)
+	}
 
 	return validation.ValidateStruct(&user,
 		validation.Field(
@@ -28,14 +41,10 @@ func (uv *uservalidation) UserValidate(user model.User)error{
 			validation.RuneLength(6,24).Error("limited min 6 max 24"),
 			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("does not match half-width alphanumeric characters"),
 		),
-		validation.Field(
-			&user.Name,
-			validation.Required.Error("Name is required"),
-			validation.RuneLength(1,24).Error("limited max 24"),
-		),
+		nameValidation,
 		validation.Field(
 			&user.Password,
-			validation.Required.Error("password id required"),
+			validation.Required.Error("password is required"),
 			validation.RuneLength(8,24).Error("limited min 8 max 24"),
 			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("does not match half-width alphanumeric characters"),
 			validation.By(judgePasswordStrength),

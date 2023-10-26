@@ -150,11 +150,17 @@ func TestUserValidate(t *testing.T){
 			},
 			want: "url: 画像サイズが大きすぎます.",
 		},
+		{
+			name:"testcase-require",
+			args: model.User{
+			},
+			want: "",
+		},
 	}
 	for _,tt:=range tests{
 		t.Run(tt.name,func(t *testing.T){
 			var got string
-			err:=uv.UserValidate(tt.args);
+			err:=uv.UserValidate(tt.args,true);
 			if err==nil{
 				got=""
 			}else{

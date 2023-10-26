@@ -3,6 +3,7 @@ package controller
 import (
 	"log"
 	"net/http"
+	"threadsAPI/controller/validation"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
 	"time"
@@ -22,10 +23,11 @@ type IUserController interface {
 
 type userController struct {
 	uu usecase.IUserUsecase
+	uv validation.IUserValidation
 }
 
-func NewUserController(uu usecase.IUserUsecase) IUserController {
-	return &userController{uu}
+func NewUserController(uu usecase.IUserUsecase,uv validation.IUserValidation) IUserController {
+	return &userController{uu,uv}
 }
 func(uc *userController)GetUser(c echo.Context)error{
 	user:=model.User{}
@@ -45,6 +47,9 @@ func (uc *userController) SignUp(c echo.Context) error {
 	if err := c.Bind(&newUser); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
+	if err:=uc.uv.UserValidate(newUser,true);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
 	userRes, err := uc.uu.SignUp(newUser)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
@@ -58,9 +63,9 @@ func (uc *userController) Login(c echo.Context) error {
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	// if err := uc.uu.Login(user); err != nil {
-	// 	return err
-	// }
+	if err:=uc.uv.UserValidate(user,false);err!=nil{
+		return c.JSON(http.StatusBadRequest, err.Error())
+	}
 	token,err:=uc.uu.Login(user)
 	if err !=nil{
 		log.Fatal(err)
@@ -100,6 +105,7 @@ func (uc *userController)CsrfToken(c echo.Context)error{
 }
 func (uc *userController)DeleteUser(c echo.Context)error{
 	user:=model.User{}
+	//userIDを受け取る
 	if err:=c.Bind(&user);err !=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())
 	}
@@ -121,6 +127,9 @@ func (uc *userController)DeleteUser(c echo.Context)error{
 func(uc *userController)UpdateUser(c echo.Context)error{
 	user:=model.User{}
 	if err:=c.Bind(&user);err !=nil{
+		return c.JSON(http.StatusBadRequest,err.Error())
+	}
+	if err:=uc.uv.UserValidate(user,false);err!=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())
 	}
 	if err:=uc.uu.UpdateUser(user);err!=nil{
