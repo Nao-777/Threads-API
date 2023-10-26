@@ -4,13 +4,10 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	"strings"
 	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/utility"
-
-	"github.com/google/uuid"
 )
 
 type IThreadUsecase interface {
@@ -34,11 +31,10 @@ func NewThreadUsecase(tr repository.IThreadRepository,ut utility.IUtility) IThre
 func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 	//スレッドIDの作成
 	//userIDを生成
-	threadUUId, err := uuid.NewRandom()
-	if err != nil {
+	threadId,err:=tu.ut.CreateUUID()
+	if err!=nil{
 		return err
 	}
-	threadId := strings.Replace(threadUUId.String(), "-", "", -1)
 	thread.ID = threadId
 
 	if thread.ImageUrl!=""{

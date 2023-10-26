@@ -7,17 +7,6 @@ import (
 	"os"
 )
 
-type IUtility interface {
-	ImgEndode(imgBytes []byte) string
-	ImgFileEndode(path string) (string,error)
-	ImgDecode(imgBase64 string) ([]byte,error)
-}
-type utility struct {}
-
-func NewUtility() IUtility{
-	return &utility{}
-}
-
 func (ut *utility)ImgEndode(imgBytes []byte) string {
 	imgStr:=b64.StdEncoding.EncodeToString(imgBytes)
 	return imgStr

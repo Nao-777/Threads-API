@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
@@ -12,7 +11,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -65,13 +63,10 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	if err != nil {
 		return model.UserResponse{}, err
 	}
-	//userIDを生成
-	userUUId, err := uuid.NewRandom()
-	if err != nil {
-		return model.UserResponse{}, err
+	userId,err:=uu.ut.CreateUUID()
+	if err!=nil{
+		return model.UserResponse{},err
 	}
-	//ハイフンを除去、文字列にした値をユーザIDとして登録
-	userId := strings.Replace(userUUId.String(), "-", "", -1)
 	//user avaterをデコード
 	if user.ImageUrl==""{
 		img,err:=uu.ut.ImgFileEndode(constants.PATH_NOIMAGW)

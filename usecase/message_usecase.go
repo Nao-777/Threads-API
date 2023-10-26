@@ -2,13 +2,10 @@ package usecase
 
 import (
 	"fmt"
-	"strings"
 	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/utility"
-
-	"github.com/google/uuid"
 )
 
 type IMessageUsecase interface {
@@ -26,11 +23,10 @@ func NewMessageUsecase(mr repository.IMessageRepository,ut utility.IUtility)IMes
 	return &messageUsecase{mr,ut}
 }
 func (mu *messageUsecase)CreateMessage(message *model.Message)error{
-	msgUUId,err:=uuid.NewRandom()
-	if err !=nil{
+	msgId,err:=mu.ut.CreateUUID()
+	if err!=nil{
 		return err
 	}
-	msgId:=strings.Replace(msgUUId.String(),"-","",-1)
 	message.Id=msgId
 	if message.ImageUrl!=""{
 		imgBytes,err:=mu.ut.ImgDecode(message.ImageUrl)
