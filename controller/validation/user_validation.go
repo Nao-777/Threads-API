@@ -26,7 +26,7 @@ func (uv *uservalidation) UserValidate(user model.User)error{
 			&user.LoginID,
 			validation.Required.Error("loginID is required"),
 			validation.RuneLength(6,24).Error("limited min 6 max 24"),
-			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("半角英数字(大文字あり)に一致していません"),
+			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("does not match half-width alphanumeric characters"),
 		),
 		validation.Field(
 			&user.Name,
@@ -37,7 +37,7 @@ func (uv *uservalidation) UserValidate(user model.User)error{
 			&user.Password,
 			validation.Required.Error("password id required"),
 			validation.RuneLength(8,24).Error("limited min 8 max 24"),
-			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("半角英数字(大文字あり)に一致していません"),
+			validation.Match(regexp.MustCompile(`^[a-zA-z0-9]+$`)).Error("does not match half-width alphanumeric characters"),
 			validation.By(judgePasswordStrength),
 		),
 		validation.Field(
@@ -59,11 +59,11 @@ func judgePasswordStrength(value interface{})error{
 		if r.FindString(str) == "" {
 			switch i {
 			case 0:
-				return fmt.Errorf("小文字の英字がありません")
+				return fmt.Errorf("there are no lowercase letters")
 			case 1:
-				return fmt.Errorf("大文字の英字がありません")
+				return fmt.Errorf("there are no uppercase letters")
 			case 2:
-				return fmt.Errorf("数字がありません")
+				return fmt.Errorf("there are no numbers")
 			}
 		}
 	}
@@ -76,7 +76,7 @@ func judgeImageSize(value interface{})error{
 		return err
 	}
 	if len(imgBytes)>100000{
-		return fmt.Errorf("画像サイズが大きすぎます")
+		return fmt.Errorf("image size is too large")
 	}
 	return nil
 }

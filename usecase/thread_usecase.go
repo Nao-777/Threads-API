@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	b64 "encoding/base64"
 	"fmt"
 	"log"
 	"strconv"
@@ -42,7 +41,7 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 	thread.ID = threadId
 
 	if thread.ImageUrl!=""{
-		uDec,err:=b64.StdEncoding.DecodeString(thread.ImageUrl)
+		uDec,err:=tu.ut.ImgDecode(thread.ImageUrl)
 		if err!=nil{
 			log.Fatal(err)
 		}

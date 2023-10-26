@@ -25,13 +25,13 @@ func main() {
 	// 	ImageUrl: "users/098333a4aafd46d78cb4511079c8583c/avator/avaterImg",
 	// }
 	//データ作成テスト
-	testThread := model.Thread{
-		ID: "1d4ff667cfd4491b80f3591e8f9acc13",
-		//UserId:   "098333a4aafd46d78cb4511079c8583c",
-		// Title:    "変更1013",
-		// Contents: "hennkousitanndasi!",
-		//ImageUrl: img,
-	}
+	// testThread := model.Thread{
+	// 	ID: "1d4ff667cfd4491b80f3591e8f9acc13",
+	// 	//UserId:   "098333a4aafd46d78cb4511079c8583c",
+	// 	// Title:    "変更1013",
+	// 	// Contents: "hennkousitanndasi!",
+	// 	//ImageUrl: img,
+	// }
 	// testMgs:=model.Message{
 	// 	ThreadId: "0b233ecfd1f746588e10fdf8bbac1743",
 	// 	UserId: "438aab35e9d5432d9cb468240d2688a5",
@@ -51,11 +51,6 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
 	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect,fbStorage)
-
-	if err:=threadRepository.GetThread(&testThread);err!=nil{
-		log.Fatal(err)
-	}
-	log.Printf("%+v\n",testThread)
 	
 	util:=utility.NewUtility()
 	userUsecase := usecase.NewUserUsecase(userRepository,util)
