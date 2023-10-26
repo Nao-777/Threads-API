@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/usecase"
 	"time"
@@ -25,8 +26,8 @@ func NewMessageController (mu usecase.IMessageUsecase)IMessageController{
 func (mc *messageController)CreateMessage(c echo.Context)error{
 	user:=c.Get("user").(*jwt.Token)
 	claims:=user.Claims.(jwt.MapClaims)
-	userId:=claims["user_id"].(string)
-	threadId:=c.Param("threadId")
+	userId:=claims[constants.JWT_USER_ID].(string)
+	threadId:=c.Param(constants.PARAM_THREAD_ID)
 	msg:=model.Message{
 		UserId: userId,
 		ThreadId: threadId,
@@ -40,7 +41,7 @@ func (mc *messageController)CreateMessage(c echo.Context)error{
 	return c.NoContent(http.StatusOK)
 }
 func (mc *messageController)GetMessagesByThreadId(c echo.Context)error{
-	threadId:=c.Param("threadId")
+	threadId:=c.Param(constants.PARAM_THREAD_ID)
 	msgs,err:=mc.mu.GetMessagesByThreadId(threadId)
 	if err!=nil{
 		return c.JSON(http.StatusBadRequest,err.Error())

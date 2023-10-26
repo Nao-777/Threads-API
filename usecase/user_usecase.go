@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/utility"
@@ -73,7 +74,7 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	userId := strings.Replace(userUUId.String(), "-", "", -1)
 	//user avaterをデコード
 	if user.ImageUrl==""{
-		img,err:=uu.ut.ImgFileEndode("sampleImg/noimage.jpeg")
+		img,err:=uu.ut.ImgFileEndode(constants.PATH_NOIMAGW)
 		if err!=nil{
 			return model.UserResponse{}, err
 		}
@@ -83,7 +84,7 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 	if err!=nil{
 		log.Fatal(err)
 	}
-    remoteFileName:="avaterImg"
+    remoteFileName:=constants.STORAGE_AVATOR_NAME
 	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",userId,remoteFileName)
 	//入力されたユーザの情報を登録
 	newUser := model.User{
@@ -132,7 +133,7 @@ func (uc *userUsecase) Login(user model.User) (string,error) {
 		log.Fatal(err)
 	}
 	token:=jwt.NewWithClaims(jwt.SigningMethodRS512,jwt.MapClaims{
-		"user_id":storedUser.ID,
+		constants.JWT_USER_ID:storedUser.ID,
 		"exp":time.Now().Add(time.Hour*24).Unix(),
 	})
 	tokenString,err:=token.SignedString(privatekey)
@@ -174,7 +175,7 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 	if err!=nil{
 		log.Fatal(err)
 	}
-    remoteFileName:="avaterImg"
+    remoteFileName:=constants.STORAGE_AVATOR_NAME
 	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
 	updateUser:=model.User{
 		ID: user.ID,
@@ -198,7 +199,7 @@ func(uu *userUsecase)PostUserImg(user model.User)error{
 	if err!=nil{
 		log.Fatal(err)
 	}
-    remoteFileName:="avaterImg"
+    remoteFileName:=constants.STORAGE_AVATOR_NAME
 	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
 	updateUser:=model.User{
 		ID: user.ID,

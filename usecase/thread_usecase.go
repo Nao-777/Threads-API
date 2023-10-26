@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 	"strings"
+	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/utility"
@@ -45,7 +46,7 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 		if err!=nil{
 			log.Fatal(err)
 		}
-		remoteFileName:="threadImg"
+		remoteFileName:=constants.STORAGE_THREAD_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
 		thread.ImageUrl=remoteFilePath
 		if err:=tu.tr.PostThreadImg(thread,uDec);err!=nil{
@@ -164,7 +165,7 @@ func(tu *threadUsecase)UpdateThread(thread model.Thread)error{
 		if err !=nil{
 			return err
 		}
-		remoteFileName:="threadImg"
+		remoteFileName:=constants.STORAGE_THREAD_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
 		thread.ImageUrl=remoteFilePath
 		if err:=tu.tr.PostThreadImg(&thread,imgBytes);err!=nil{

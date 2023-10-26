@@ -3,6 +3,7 @@ package usecase
 import (
 	"fmt"
 	"strings"
+	"threadsAPI/constants"
 	"threadsAPI/model"
 	"threadsAPI/repository"
 	"threadsAPI/utility"
@@ -36,7 +37,7 @@ func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 		if err!=nil{
 			return err
 		}
-		remoteFileName:="msgImg"
+		remoteFileName:=constants.STORAGE_MESSAGE_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
 		message.ImageUrl=remoteFilePath
 		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
@@ -98,7 +99,7 @@ func(mu *messageUsecase)UpdateMessage(message *model.Message)error{
 		if err!=nil{
 			return err
 		}
-		remoteFileName:="msgImg"
+		remoteFileName:=constants.STORAGE_MESSAGE_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
 		message.ImageUrl=remoteFilePath
 		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
