@@ -101,7 +101,7 @@ func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
-			LoginID: thread.User.LoginID,
+			AvatorImg: thread.User.ImageUrl,
 			Title: thread.Title,
 			Contents: thread.Contents,
 			ImageUrl: thread.ImageUrl,
@@ -129,7 +129,7 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
-			LoginID: thread.User.LoginID,
+			AvatorImg: thread.User.ImageUrl,
 			Title: thread.Title,
 			Contents: thread.Contents,
 			ImageUrl: thread.ImageUrl,

@@ -15,7 +15,7 @@ type Thread struct {
 type ResThread struct{
 	ID string `json:"id"`
 	UserName string `json:"user_name"`
-	LoginID string `json:"login_id"`
+	AvatorImg string `json:"avatorImg"`
 	Title     string    `json:"title"`
 	Contents  string    `json:"contents"`
 	ImageUrl string `json:"url"`
