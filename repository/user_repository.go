@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"threadsAPI/model"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ type IUserRepository interface {
 	PostUserImg(user *model.User,img []byte)error
 	GetUserImg(user *model.User)([]byte,error)
 	DeleteUserImg(user *model.User)error
+	GetUserImgUrl(user *model.User)error
 }
 
 // ユーザリポジトリの構造体
@@ -99,5 +101,17 @@ func(ur *userRepository)DeleteUserImg(user *model.User)error{
 	if err:=ur.fbstorage.Object(user.ImageUrl).Delete(ctx);err!=nil{
 		return err
 	}
+	return nil
+}
+func(ur *userRepository)GetUserImgUrl(user *model.User)error{
+	object :=ur.fbstorage.Object(user.ImageUrl)
+	downloadURL,err:=ur.fbstorage.SignedURL(object.ObjectName(),&storage.SignedURLOptions{
+		Expires: time.Now().AddDate(100, 0, 0),
+		Method: "GET",
+	})
+	if err!=nil{
+		return err
+	}
+	user.ImageUrl=downloadURL
 	return nil
 }

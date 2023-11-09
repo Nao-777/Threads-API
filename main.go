@@ -30,6 +30,14 @@ func main() {
 	userRepository := repository.NewUserRepository(dbConnect,fbStorage)
 	threadRepository := repository.NewThreadRpository(dbConnect,fbStorage)
 	messageRepository:=repository.NewMessageRepository(dbConnect,fbStorage)
+
+	testUser:=model.User{
+		ImageUrl: "users/0991c6f9c4174bb0b2aa505e4f69b6f1/avator/avatorImg",
+	}
+	if err:=userRepository.GetUserImgUrl(&testUser);err!=nil{
+		log.Fatal(err)
+	}
+	log.Println(testUser.ImageUrl)
 	
 	util:=utility.NewUtility()
 	userUsecase := usecase.NewUserUsecase(userRepository,util)
