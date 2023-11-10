@@ -9,6 +9,7 @@ type Thread struct {
 	Title     string    `json:"title"`
 	Contents  string    `json:"contents"`
 	ImageUrl string `json:"url"`
+	StoragePath string `json:"storage_path"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }

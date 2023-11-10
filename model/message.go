@@ -9,6 +9,7 @@ type Message struct{
 	UserId    string    `json:"user_id" gorm:"not null"`
 	Message string `json:"message"`
 	ImageUrl string `json:"url"`
+	StoragePath string `json:"storage_path"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdateAt  time.Time `json:"update_at"`
 }
