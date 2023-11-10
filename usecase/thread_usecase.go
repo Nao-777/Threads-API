@@ -44,8 +44,11 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 		}
 		remoteFileName:=constants.STORAGE_THREAD_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
-		thread.ImageUrl=remoteFilePath
+		thread.StoragePath=remoteFilePath
 		if err:=tu.tr.PostThreadImg(thread,uDec);err!=nil{
+			return err
+		}
+		if err:=tu.tr.GetThreadImgUrl(thread);err!=nil{
 			return err
 		}
 	}
@@ -55,22 +58,6 @@ func (tu *threadUsecase) CreateThread(thread *model.Thread) error {
 	}
 	return nil
 }
-
-// // threadデータの取得（userID）
-// func (tu *threadUsecase) GetThreadsByUserID(userId string) ([]model.Thread, error) {
-// 	threads := []model.Thread{}
-// 	if err := tu.tr.GetThreadsByUserID(&threads, userId); err != nil {
-// 		return []model.Thread{}, err
-// 	}
-// 	for _,thread :=range threads{
-// 		imgBytes,err:=tu.tr.GetThreadImg(&thread)
-// 		if err!=nil{
-// 			return []model.Thread{},err
-// 		}
-// 		thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
-// 	} 
-// 	return threads, nil
-// }
 
 // threadデータの取得
 func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam string) ([]model.ResThread, error) {
@@ -90,14 +77,6 @@ func (tu *threadUsecase) GetThreadsLimitAndOffset(limitParam string, offsetParam
 	}
 	//res用の構造体に値を格納
 	for _,thread :=range threads{
-		if thread.ImageUrl!=""{
-			imgBytes,err:=tu.tr.GetThreadImg(&thread)
-			if err!=nil{
-				return []model.ResThread{},err
-			}
-			thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
-		}
-
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
@@ -118,14 +97,6 @@ func (tu *threadUsecase) GetThreads() ([]model.ResThread, error) {
 		return []model.ResThread{}, err
 	}
 	for _,thread :=range threads{
-		if thread.ImageUrl!=""{
-			imgBytes,err:=tu.tr.GetThreadImg(&thread)
-			if err!=nil{
-				return []model.ResThread{},err
-			}
-			thread.ImageUrl=tu.ut.ImgEndode(imgBytes)
-		}
-
 		resThread:=model.ResThread{
 			ID: thread.ID,
 			UserName: thread.User.Name,
