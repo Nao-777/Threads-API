@@ -134,7 +134,7 @@ func(tu *threadUsecase)UpdateThread(thread model.Thread)error{
 		}
 		remoteFileName:=constants.STORAGE_THREAD_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("threads/%s/main/%s",thread.ID,remoteFileName)
-		thread.ImageUrl=remoteFilePath
+		thread.StoragePath=remoteFilePath
 		if err:=tu.tr.PostThreadImg(&thread,imgBytes);err!=nil{
 			return err
 		}
