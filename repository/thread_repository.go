@@ -2,9 +2,8 @@ package repository
 
 import (
 	"context"
-	"io"
-	"log"
 	"threadsAPI/model"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"gorm.io/gorm"
@@ -19,8 +18,8 @@ type IThreadRepository interface {
 	DeleteThread(thread *model.Thread)error
 	UpdateThread(thread *model.Thread)error
 	PostThreadImg(thread *model.Thread,img []byte)error
-	GetThreadImg(thread *model.Thread)([]byte,error)
 	DeleteThreadImg(thread *model.Thread)error
+	GetThreadImgUrl(thread *model.Thread)error
 }
 
 type threadRepository struct {
@@ -97,25 +96,24 @@ func(tr *threadRepository)PostThreadImg(thread *model.Thread,img []byte)error{
 	defer writer.Close()
 	return nil
 }
-func(tr *threadRepository)GetThreadImg(thread *model.Thread)([]byte,error){
-	ctx:=context.Background()
-	rc,err:=tr.fbstorage.Object(thread.ImageUrl).NewReader(ctx)
-	if err!=nil{
-		return nil,err
-	}
-	defer rc.Close()
-	data,err:=io.ReadAll(rc)
-	if err!=nil{
-		return nil,err
-	}
-	log.Printf("Download contents: %dbyte\n",len(data))
-	return data,err
-}
 
 func(tr *threadRepository)DeleteThreadImg(thread *model.Thread)error{
 	ctx:=context.Background()
 	if err:=tr.fbstorage.Object(thread.ImageUrl).Delete(ctx);err!=nil{
 		return err
 	}
+	return nil
+}
+func(tr *threadRepository)GetThreadImgUrl(thread *model.Thread)error{
+	//storageのパス
+	object :=tr.fbstorage.Object(thread.StoragePath)
+	downloadURL,err:=tr.fbstorage.SignedURL(object.ObjectName(),&storage.SignedURLOptions{
+		Expires: time.Now().AddDate(1, 0, 0),
+		Method: "GET",
+	})
+	if err!=nil{
+		return err
+	}
+	thread.ImageUrl=downloadURL
 	return nil
 }

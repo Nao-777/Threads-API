@@ -41,16 +41,11 @@ func(uc *userUsecase)GetUser(user model.User)(model.UserResponse, error){
 	if err:=uc.ur.GetUser(&user);err!=nil{
 		return model.UserResponse{},err
 	}
-	imgBytes,err:=uc.ur.GetUserImg(&user)
-	if err!=nil{
-		return model.UserResponse{},err
-	}
-	imgB64:=uc.ut.ImgEndode(imgBytes)
 	resUser:=model.UserResponse{
 		ID: user.ID,
 		LoginID: user.LoginID,
 		Name: user.Name,
-		ImageUrl: imgB64,
+		ImageUrl: user.ImageUrl,
 		CreatedAt: user.CreatedAt,
 	}
 	return resUser,nil
@@ -86,10 +81,13 @@ func (uu *userUsecase) SignUp(user model.User) (model.UserResponse, error) {
 		ID:       userId,
 		LoginID:  user.LoginID,
 		Name:     user.Name,
-		ImageUrl: remoteFilePath,
+		StoragePath: remoteFilePath,
 		Password: string(hash),
 	}
 	if err:=uu.ur.PostUserImg(&newUser,uDec);err!=nil{
+		return model.UserResponse{},err
+	}
+	if err:=uu.ur.GetUserImgUrl(&newUser);err!=nil{
 		return model.UserResponse{},err
 	}
 	if err := uu.ur.InsertUser(&newUser); err != nil {
@@ -152,7 +150,7 @@ func(uu *userUsecase)DeleteUser(user model.User)error{
 	if err:=uu.ur.DeleteUser(&user);err!=nil{
 		return err
 	}
-	if storedUser.ImageUrl!=""{
+	if storedUser.StoragePath!=""{
 		if err:=uu.ur.DeleteUserImg(&storedUser);err!=nil{
 			return err
 		}
@@ -177,7 +175,7 @@ func(uu *userUsecase)UpdateUser(user model.User)error{
 		LoginID: user.LoginID,
 		Name: user.Name,
 		Password: string(hash),
-		ImageUrl: remoteFilePath,
+		StoragePath: remoteFilePath,
 		UpdateAt: time.Now(),
 	}
 	if err:=uu.ur.PostUserImg(&updateUser,uDec);err!=nil{
@@ -198,10 +196,13 @@ func(uu *userUsecase)PostUserImg(user model.User)error{
 	remoteFilePath:=fmt.Sprintf("users/%s/avator/%s",user.ID,remoteFileName)
 	updateUser:=model.User{
 		ID: user.ID,
-		ImageUrl: remoteFilePath,
+		StoragePath: remoteFilePath,
 		UpdateAt: time.Now(),
 	}
 	if err:=uu.ur.PostUserImg(&updateUser,uDec);err!=nil{
+		return err
+	}
+	if err:=uu.ur.GetUserImgUrl(&updateUser);err!=nil{
 		return err
 	}
 	if err:=uu.ur.UpDateUser(&updateUser);err!=nil{

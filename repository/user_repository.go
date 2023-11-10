@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"threadsAPI/model"
+	"time"
 
 	"cloud.google.com/go/storage"
 	"gorm.io/gorm"
@@ -20,6 +21,7 @@ type IUserRepository interface {
 	PostUserImg(user *model.User,img []byte)error
 	GetUserImg(user *model.User)([]byte,error)
 	DeleteUserImg(user *model.User)error
+	GetUserImgUrl(user *model.User)error
 }
 
 // ユーザリポジトリの構造体
@@ -71,7 +73,7 @@ func(ur *userRepository)UpDateUser(user *model.User)error{
 func(ur *userRepository)PostUserImg(user *model.User,img []byte)error{
 	ctx:=context.Background()
 	//storageで保管する画像の名前
-	writer:=ur.fbstorage.Object(user.ImageUrl).NewWriter(ctx)
+	writer:=ur.fbstorage.Object(user.StoragePath).NewWriter(ctx)
 	writer.ObjectAttrs.ContentType="image/jpg"
 	writer.ObjectAttrs.CacheControl="no-cache"
 	if _,err:=writer.Write(img);err!=nil{
@@ -82,7 +84,7 @@ func(ur *userRepository)PostUserImg(user *model.User,img []byte)error{
 }
 func (ur *userRepository)GetUserImg(user *model.User)([]byte,error){
 	ctx:=context.Background()
-	rc,err:=ur.fbstorage.Object(user.ImageUrl).NewReader(ctx)
+	rc,err:=ur.fbstorage.Object(user.StoragePath).NewReader(ctx)
 	if err!=nil{
 		return nil,err
 	}
@@ -96,8 +98,21 @@ func (ur *userRepository)GetUserImg(user *model.User)([]byte,error){
 }
 func(ur *userRepository)DeleteUserImg(user *model.User)error{
 	ctx:=context.Background()
-	if err:=ur.fbstorage.Object(user.ImageUrl).Delete(ctx);err!=nil{
+	if err:=ur.fbstorage.Object(user.StoragePath).Delete(ctx);err!=nil{
 		return err
 	}
+	return nil
+}
+func(ur *userRepository)GetUserImgUrl(user *model.User)error{
+	//storageのパス
+	object :=ur.fbstorage.Object(user.StoragePath)
+	downloadURL,err:=ur.fbstorage.SignedURL(object.ObjectName(),&storage.SignedURLOptions{
+		Expires: time.Now().AddDate(1, 0, 0),
+		Method: "GET",
+	})
+	if err!=nil{
+		return err
+	}
+	user.ImageUrl=downloadURL
 	return nil
 }

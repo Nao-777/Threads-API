@@ -35,8 +35,11 @@ func (mu *messageUsecase)CreateMessage(message *model.Message)error{
 		}
 		remoteFileName:=constants.STORAGE_MESSAGE_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
-		message.ImageUrl=remoteFilePath
+		message.StoragePath=remoteFilePath
 		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
+			return err
+		}
+		if err:=mu.mr.GetMessageImgUrl(message);err!=nil{
 			return err
 		}
 	}
@@ -53,14 +56,6 @@ func(mu *messageUsecase)GetMessagesByThreadId(threadId string)([]model.ResMessag
 		return []model.ResMessage{},err
 	}
 	for _,msg:=range msg{
-		if msg.ImageUrl!=""{
-			imgBytes,err:=mu.mr.GetMessageImg(&msg)
-			if err!=nil{
-				return []model.ResMessage{},err
-			}
-			img:=mu.ut.ImgEndode(imgBytes)
-			msg.ImageUrl=img
-		}
 		resMsg:=model.ResMessage{
 			Id: msg.Id,
 			Name: msg.User.Name,
@@ -97,7 +92,7 @@ func(mu *messageUsecase)UpdateMessage(message *model.Message)error{
 		}
 		remoteFileName:=constants.STORAGE_MESSAGE_IMG_NAME
 		remoteFilePath:=fmt.Sprintf("messages/%s/main/%s",message.Id,remoteFileName)
-		message.ImageUrl=remoteFilePath
+		message.StoragePath=remoteFilePath
 		if err:=mu.mr.PostMessageImg(message,imgBytes);err!=nil{
 			return err
 		}
