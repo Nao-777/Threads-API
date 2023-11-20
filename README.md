@@ -54,7 +54,9 @@ WEB アプリケーションの仕組みの理解とメンテナンス性や拡�
 ### 画像の管理
 
 Cloud Storage for Firebase を使用。  
-Database には Cloud Storage のファイルへのディレクトリを示す文字列を格納。
+フロント側から画像を Base64 形式で取得し、Database には Cloud Storage に保存している画像の URL を文字列として格納している。  
+以下画像データの形式の変化
+![Alt text](Document/img/image1.png)
 
 ## 技術スタック
 
@@ -65,10 +67,6 @@ Database には Cloud Storage のファイルへのディレクトリを示す�
 ### フレームワーク
 
 - Echo
-
-### アーキテクチャ
-
-- Clean Architecture
 
 ### Database
 
